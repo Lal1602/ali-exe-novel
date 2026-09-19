@@ -39,6 +39,12 @@ const QUIZ_OPTIONS: QuizOption[] = [
     text: 'CEGIL (KEHADIRAN PACAR)',
     wrongMessage: 'HAMPIR! Tapi bukan sekadar keberadaannya semata. Ada sesuatu yang jauh lebih luas dan mendalam...',
   },
+  {
+    id: 'e',
+    label: 'E',
+    text: 'RASA CEMBURU YANG DISAMBUT HANGAT',
+    wrongMessage: 'HAMPIR! Cemburu saat itu memang jadi salah satu katalis besar ketika disambut hangat, tapi anomali kepribadian ini lahir dari akumulasi banyak hal kecil...',
+  },
 ];
 
 export const QuizScreen: React.FC<QuizScreenProps> = ({ onComplete }) => {

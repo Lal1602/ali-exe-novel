@@ -9,18 +9,18 @@ interface CoffeeOrderPuzzleProps {
 
 const COFFEE_OPTIONS = [
   {
+    id: 'kopi-susu-aren',
+    name: 'Es Kopi Susu Gula Aren',
+    tag: 'FAVORIT MASLI',
+    desc: 'Pilihan khas Masli — Ali paling sering pesan es kopi susu gula aren.',
+    reaction: '“‘Gula arennya dikurangin kan, Mas?’ — tanyaku. ‘Udah, tenang aja,’ jawabnya santai sambil nyerahin cup kopi yang masih berembun.”',
+  },
+  {
     id: 'kopi-tubruk',
     name: 'Kopi Hitam / Americano',
     tag: 'PAHIT & SERIUS',
-    desc: 'Pilihan khas Masli — tidak banyak basa-basi, langsung ke inti.',
+    desc: 'Pilihan cadangan saat butuh kafein ekstra tanpa rasa manis.',
     reaction: '“Masli senyum tipis waktu kopinya sampai di mejaku: ‘Tumben pesen yang ini.’ Padahal aku cuma mau keliatan keren di depannya.”',
-  },
-  {
-    id: 'kopi-susu-aren',
-    name: 'Es Kopi Susu Gula Aren',
-    tag: 'MANIS & FAVORIT',
-    desc: 'Pesanan klasik yang paling sering dititip saat jam istirahat.',
-    reaction: '“‘Gula arennya dikurangin kan, Mas?’ — tanyaku. ‘Udah, tenang aja,’ jawabnya santai sambil nyerahin cup kopi yang masih berembun.”',
   },
   {
     id: 'caramel-macchiato',

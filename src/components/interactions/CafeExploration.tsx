@@ -10,9 +10,9 @@ interface CafeExplorationProps {
 const OBJECTS = [
   {
     id: 'cangkir',
-    icon: '☕',
-    name: 'Cangkir Kopi Hangat',
-    thought: 'Dua cangkir kopi yang masih mengepul di atas meja kayu. Tanganku memegang cangkir hanya agar dia tidak melihat jemariku yang sedikit gemetar.',
+    icon: '🧋',
+    name: 'Es Kopi Susu',
+    thought: 'Dua gelas es kopi susu dengan bulir embun dingin di atas meja kayu. Tanganku memegang gelas dingin hanya agar dia tidak melihat jemariku yang sedikit gemetar.',
   },
   {
     id: 'lampu',

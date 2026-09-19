@@ -12,12 +12,12 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     previewText: 'Aku pernah jatuh dari motor karena tumpahan oli di jalan...',
     fullStory: [
       'Aku pernah jatuh dari motor karena ada tumpahan oli di jalan.',
-      'Lukanya tidak parah, tapi ketika Ali sampai dan bangun...',
+      'Tapi ketika aku sampai, Ali masih tidur. Dan begitu dia bangun, ia membaca chatku yang mengatakan aku habis jatuh.',
       'Hal pertama yang dia lakukan adalah langsung datang ke meja kerjaku.'
     ],
     dialogue: [
       { speaker: 'Ali', text: 'Mana, liat.' },
-      { speaker: 'Cegil', text: 'Cuma lecet dikit kok mas...' },
+      { speaker: 'Cegil', text: 'Cuma memar dikit kok...' },
       { speaker: 'Ali', text: 'Makanya hati-hati. Duduk dulu sini.' }
     ],
     statGain: { label: 'DAMAGE REPORT', value: 'Lutut & Siku: Ringan | Harga Diri: Rusak Parah' },
@@ -38,7 +38,7 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     ],
     dialogue: [
       { speaker: 'Ali', text: 'Diem di situ. Pengen lihat motornya sekalian.' },
-      { speaker: 'Cegil', text: '*(padahal mah alesannya biar aku ga capek jalan)*' }
+      { speaker: 'Cegil', text: '*(padahal mah alesannya biar aku ga capek jalan abis jatuh ini)*' }
     ],
     statGain: { label: 'CARE & PROTECTIVENESS', value: '+15 POINT' },
     unlocked: false,
@@ -52,8 +52,8 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     bgImage: '/assets/bg-tropodo.jpg',
     previewText: 'Layar perlahan gelap. Tidak butuh kalimat panjang...',
     fullStory: [
-      'Layar perlahan menjadi hitam. Tidak ada musik megah.',
-      'Hanya sebuah jeda dan nada suara yang sangat tenang namun runtuh.',
+      'Masih di hari yang sama sehabis insiden jatuh itu...',
+      'Ada sebuah jeda dan nada suara yang sangat tenang dari bibirnya.',
       'Hanya satu kata yang diulang dengan cara yang hanya dia yang tahu.'
     ],
     dialogue: [
@@ -101,7 +101,7 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     ],
     dialogue: [
       { speaker: 'Ali', text: 'Untung ga parah...' },
-      { speaker: 'Cegil', text: 'Iya mas, makasih udah ditanyain...' }
+      { speaker: 'Cegil', text: 'Iya, makasih udah ditanyain...' }
     ],
     statGain: { label: 'GENTLE SIDE', value: 'UNLOCKED (+20)' },
     unlocked: false,
@@ -141,7 +141,7 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     ],
     dialogue: [
       { speaker: 'Ali', text: 'Kenapa itu bibirmu? Kaya luka gitu.' },
-      { speaker: 'Cegil', text: 'Iya abis tak kelopekin tadi mas...' },
+      { speaker: 'Cegil', text: 'Iya abis tak kelopekin tadi...' },
       { speaker: 'Ali', text: 'Kan, udah kuduga. Kamu ngerusak barangku. Itu udah jadi milikku, kenapa kamu rusak.' }
     ],
     statGain: { label: 'POSSESSIVENESS (CUTE)', value: '+999 DAMAGE' },
@@ -201,8 +201,8 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     ],
     dialogue: [
       { speaker: 'Ali', text: 'Besok pengen jogging, tapi kamu ga ikut. Yawes besoke lagi aja.' },
-      { speaker: 'Cegil', text: 'Loh kenapa ga sendirian aja mas?' },
-      { speaker: 'Ali', text: 'Aku pengene jogging sm kamu.' }
+      { speaker: 'Cegil', text: 'Loh kenapa ga sendirian aja?' },
+      { speaker: 'Ali', text: 'aku pengene jogging sm ayangku' }
     ],
     statGain: { label: 'TOGETHERNESS', value: '100%' },
     unlocked: false,

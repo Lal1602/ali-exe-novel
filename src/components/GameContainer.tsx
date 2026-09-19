@@ -297,8 +297,8 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
       {currentNode.systemBox && !isModalActive && (
         <div style={{
           position: 'absolute',
-          top: '84px',
-          right: '24px',
+          top: '68px',
+          right: '20px',
           zIndex: 35,
           animation: 'fadeIn 0.3s ease',
         }}>

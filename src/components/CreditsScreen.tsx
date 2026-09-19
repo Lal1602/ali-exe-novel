@@ -64,7 +64,7 @@ export const CreditsScreen: React.FC<CreditsScreenProps> = ({ onRestart }) => {
           </div>
           <div>
             <span style={{ color: '#565f89' }}>PROGRAMMED BY:</span>{' '}
-            <span style={{ color: '#f7768e' }}>YOUR CEGIL</span>
+            <span style={{ color: '#73daca' }}>YOUR ADIK IPAR</span>
           </div>
           <div>
             <span style={{ color: '#565f89' }}>ART DIRECTION:</span>{' '}
@@ -81,7 +81,7 @@ export const CreditsScreen: React.FC<CreditsScreenProps> = ({ onRestart }) => {
           <div style={{ marginTop: '10px' }}>
             <span style={{ color: '#bb9af7' }}>SPECIAL THANKS TO:</span>
             <div style={{ color: '#ffe600', fontSize: '0.85rem', marginTop: '4px' }}>
-              THE PERSON WHO KEEPS SAYING “Yang...”
+              THE PERSON WHO KEEPS SAYING &quot;Love you, Cegilku.&quot;
             </div>
           </div>
         </div>

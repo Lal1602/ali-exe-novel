@@ -15,7 +15,7 @@ interface AffectionHUDProps {
 }
 
 const LOCATION_LABELS: Record<GameLocation, { icon: string; name: string; tag: string }> = {
-  'kantor': { icon: '🏢', name: 'KANTOR ABADI JAYA', tag: 'SURABAYA' },
+  'kantor': { icon: '🏢', name: 'GEN EPISTREE', tag: 'SURABAYA' },
   'cafe-little-cave': { icon: '☕', name: 'CAFE LITTLE CAVE', tag: 'SECRET SPOT' },
   'tropodo': { icon: '🏠', name: 'RUMAH CEGIL (TROPODO)', tag: 'SIDOARJO' },
   'malang': { icon: '🌃', name: 'VIEWPOINT BUKIT MALANG', tag: 'SPECIAL EVENT' },

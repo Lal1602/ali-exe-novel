@@ -63,7 +63,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
       title: 'PROLOGUE',
       subtitle: 'BEFORE THE ANOMALY',
       date: 'Awal 2026',
-      location: 'Kantor Abadi Jaya, Surabaya',
+      location: 'Gen Epistree, Surabaya',
       affection: 0,
     },
     speaker: 'Cegil',
@@ -99,7 +99,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     speakerTitle: 'Player 2',
     speakerAvatar: 'cegil',
     textType: 'dialogue', // Spoken Dialogue (with quotes)
-    text: '“Selamat pagi, Mas Ali.”',
+    text: '"Mas ini ada Reimburse rokok ya"',
     systemBox: {
       title: 'RELATIONSHIP DATABASE',
       lines: [
@@ -123,7 +123,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     speakerTitle: 'Player 1',
     speakerAvatar: 'ali',
     textType: 'dialogue', // Spoken Dialogue (with quotes)
-    text: '“Pagi.”',
+    text: '"Oke."',
     systemBox: {
       title: 'RELATIONSHIP DATABASE',
       lines: [
@@ -175,7 +175,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     speaker: 'Cegil',
     speakerAvatar: 'cegil',
     textType: 'inner-monologue', // Kata Hati (no quotes)
-    text: 'Waktu itu, di mataku kamu cuma sosok pendiam yang suka memakai jaket gelap dan headphone.',
+    text: 'Waktu itu, di mataku kamu cuma sosok pendiam yang selalu memakai kaos hitam dan headphone.',
     narration: [
       'Orang yang kelihatan sangat cuek dengan sekitar.',
       'Fokus di depan komputermu, menyelesaikan pekerjaan tanpa banyak suara.',
@@ -242,7 +242,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     text: 'Semua anomali ini berawal dari hal yang sangat klise: secangkir kopi di jam istirahat kantor.',
     narration: [
       'Suatu siang, rasa kantukku sudah tidak tertolong lagi.',
-      'Dan kebetulan, kamu sedang bersiap turun untuk membeli kopi di kedai bawah gedung kantor.',
+      'Dan kebetulan kamu sedang bersiap pergi ke Gudang seperti biasanya.',
     ],
     systemBox: {
       title: 'QUEST 01: COFFEE BREAK',
@@ -826,7 +826,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
       title: 'CHAPTER 02',
       subtitle: 'THE APPROACH',
       date: '26 Juli — 8 Agustus 2026',
-      location: 'Kantor Abadi Jaya, Surabaya',
+      location: 'Gen Epistree, Surabaya',
       affection: 5,
     },
     speaker: 'Cegil',
@@ -969,7 +969,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     text: '8 Agustus 2026 — Rumah orang tuaku di Tropodo, Sidoarjo.',
     narration: [
       'Hari itu, kamu memberanikan diri untuk datang main ke rumahku.',
-      'Sebelum kamu datang, lewat pesan singkat kamu sempat mengaku perasaamu saat itu sudah sekitar 50%.',
+      'Waktu kamu datang, aku kaget sekali dengan potongan rambut baru mu yang jadi pendek rapi. Padahal tadi sore waktu ketemu di kantor masih gondrong.',
     ],
     systemBox: {
       title: 'CHAPTER 03: 50% AFFECTION',
@@ -1022,14 +1022,14 @@ export const STORY_NODES: Record<string, StoryNode> = {
     textType: 'inner-monologue', // Kata Hati (no quotes)
     text: 'Kamu bisa mengobrol santai dan sopan dengan kedua orang tuaku seolah-olah kamu sudah sering bertamu ke sini.',
     narration: [
-      'Caramu menjawab pertanyaan papa, caramu tersenyum ramah pada mama...',
+      'Caramu menjawab pertanyaan bapak, caramu tersenyum ramah pada ibu...',
       'Tidak ada kepura-puraan. Kamu hadir sebagai dirimu sendiri yang apa adanya.',
     ],
     systemBox: {
       title: 'PARENTAL IMPRESSION',
       lines: [
-        { label: 'PAPA\'S EVALUATION', value: 'SOPAN & TANGGUNG JAWAB' },
-        { label: 'MAMA\'S EVALUATION', value: 'ANAKNYA BAIK & GA NEKO-NEKO' },
+        { label: 'BAPAK\'S EVALUATION', value: 'SOPAN & TANGGUNG JAWAB' },
+        { label: 'IBU\'S EVALUATION', value: 'ANAKNYA BAIK & GA NEKO-NEKO' },
         { label: 'APPROVAL RATING', value: 'HIGH' },
       ],
       accentColor: 'green',
@@ -1075,7 +1075,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     speaker: 'Cegil',
     speakerAvatar: 'cegil',
     textType: 'inner-monologue', // Kata Hati (no quotes)
-    text: 'Malam itu di kamarku di Tropodo, aku tersenyum memandangi pesanmu: udah 60% nih.',
+    text: 'Malam itu di kamarku di Tropodo, aku tersenyum mengingat perkataan mu sehabis ngobrol dengan orang tuaku: udah 60% nih.',
     narration: [
       '60% berarti ada kemungkinan besar.',
       'Tapi kita masih butuh satu tempat istimewa lagi untuk menyempurnakannya menjadi seratus persen...',
@@ -1596,8 +1596,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     textType: 'inner-monologue', // Kata Hati (no quotes)
     text: 'Dulu panggilannya Mas Ali. Lalu berubah jadi Masli. Dan sekarang... ada satu panggilan yang kusimpan hanya untuk hubungan ini: Sayang.',
     narration: [
-      'Aku tidak tahu bagaimana tepatnya kepribadianmu berubah.',
-      'Atau mungkin sebenarnya kamu tidak pernah berubah sama sekali.',
+      'Aku tidak tahu bagaimana tepatnya kepribadianku berubah. Atau mungkin sebenarnya aku hanya menampilkan kepribadian asliku yang memang tidak pernah muncul ke permukaan saja.',
       'Mungkin aku saja yang akhirnya cukup beruntung diberi kesempatan untuk mengenal bagian-bagian dirimu yang paling lembut.',
       'Sisi lembutmu bukan sesuatu yang bisa dilihat oleh semua orang. Dan aku sangat bersyukur menjadi orang yang boleh memilikinya.',
     ],
