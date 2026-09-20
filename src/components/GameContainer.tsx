@@ -15,9 +15,9 @@ import { QuizScreen } from './QuizScreen';
 import { InnerChildUnlock } from './InnerChildUnlock';
 import { SaveScreen } from './SaveScreen';
 import { CreditsScreen } from './CreditsScreen';
-import { SceneTransition } from './SceneTransition';
+import { SceneTransition, TransitionPhase } from './SceneTransition';
 import { ChapterCard } from './ChapterCard';
-import { CharacterSprites } from './CharacterSprites';
+import { CharacterPortrait } from './CharacterSprites';
 import { AmbientElements } from './AmbientElements';
 import { AffectionToast } from './AffectionToast';
 
@@ -30,6 +30,22 @@ import { ChatTapper } from './interactions/ChatTapper';
 import { MalangExploration } from './interactions/MalangExploration';
 import { EvidenceBoard } from './interactions/EvidenceBoard';
 
+// Helper to resolve fallback background from location
+const getDefaultBg = (location?: string) => {
+  switch (location) {
+    case 'kantor':
+      return '/assets/bg-kantor.jpg';
+    case 'cafe-little-cave':
+      return '/assets/bg-cafe.jpg';
+    case 'tropodo':
+      return '/assets/bg-tropodo.jpg';
+    case 'malang':
+      return '/assets/bg-malang.jpg';
+    default:
+      return null;
+  }
+};
+
 export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onReturnToTitle }) => {
   const [currentNodeId, setCurrentNodeId] = useState<string>('boot-init');
   const [affection, setAffection] = useState<number>(0);
@@ -40,9 +56,9 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [hasStartedAudio, setHasStartedAudio] = useState<boolean>(false);
 
-  // Transition states
+  // Transition state machine
   const [transitionType, setTransitionType] = useState<TransitionType>('fade-black');
-  const [isTransitionActive, setIsTransitionActive] = useState<boolean>(false);
+  const [transitionPhase, setTransitionPhase] = useState<TransitionPhase>('idle');
 
   // Chapter card state
   const [showChapterCard, setShowChapterCard] = useState<boolean>(false);
@@ -65,7 +81,7 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
     }
   }, [currentNode.bgmMood]);
 
-  // Check if node is chapter start and hasn't been shown yet
+  // Check if node is chapter start on initial load
   useEffect(() => {
     if (currentNode.isChapterStart && currentNode.chapterMeta && !chapterSeenRef.current.has(currentNode.id)) {
       chapterSeenRef.current.add(currentNode.id);
@@ -106,22 +122,61 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
     }
   }, [currentNode.affection, currentNode.affectionChangeText, affection]);
 
+  // Smooth, leak-proof scene transition with 4-phase curtain state machine
   const changeSceneWithTransition = (targetNodeId: string) => {
     ensureAudio();
     const nextNode = STORY_NODES[targetNodeId];
     if (!nextNode) return;
 
-    // Determine transition type: explicit on node, or location difference -> fade-black
-    const needsTransition = currentNode.transitionOut || nextNode.transitionIn || (currentNode.location !== nextNode.location);
-    const chosenTransition = currentNode.transitionOut || nextNode.transitionIn || 'fade-black';
+    // Resolve current and next background to detect background changes accurately
+    const currentBg = currentNode.bgImage || getDefaultBg(currentNode.location);
+    const nextBg = nextNode.bgImage || getDefaultBg(nextNode.location);
+
+    const needsTransition =
+      Boolean(currentNode.transitionOut) ||
+      Boolean(nextNode.transitionIn) ||
+      currentNode.location !== nextNode.location ||
+      currentBg !== nextBg ||
+      currentNode.phase !== nextNode.phase ||
+      Boolean(nextNode.isChapterStart);
+
+    const chosenTransition: TransitionType =
+      currentNode.transitionOut || nextNode.transitionIn || 'fade-black';
 
     if (needsTransition) {
       sound.playWhoosh();
       setTransitionType(chosenTransition);
-      setIsTransitionActive(true);
+      setTransitionPhase('closing');
+
+      const closeDuration = chosenTransition === 'flash-white' ? 250 : 320;
+      const holdDuration = 100;
+      const openDuration = 320;
+
+      // Phase 1: Closing curtain (320ms) -> Screen reaches 100% solid opacity
       setTimeout(() => {
+        // Phase 2: Screen is now 100% COVERED in solid barrier (zero light leaks)
+        setTransitionPhase('covered');
+
+        // Immediately mount chapter card if needed so it mounts behind the blackout
+        if (nextNode.isChapterStart && nextNode.chapterMeta && !chapterSeenRef.current.has(nextNode.id)) {
+          chapterSeenRef.current.add(nextNode.id);
+          setShowChapterCard(true);
+        }
+
+        // Swap the scene node in the DOM behind the 100% solid curtain
         setCurrentNodeId(targetNodeId);
-      }, 300);
+
+        // Hold in solid blackout for 100ms so Next.js Image decode and DOM painting finish
+        setTimeout(() => {
+          // Phase 3: Open curtain smoothly revealing the ready scene
+          setTransitionPhase('opening');
+
+          setTimeout(() => {
+            // Phase 4: Complete and idle
+            setTransitionPhase('idle');
+          }, openDuration);
+        }, holdDuration);
+      }, closeDuration);
     } else {
       setCurrentNodeId(targetNodeId);
     }
@@ -150,7 +205,18 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
     if (onReturnToTitle) {
       onReturnToTitle();
     } else {
-      setCurrentNodeId('boot-init');
+      setTransitionType('fade-black');
+      setTransitionPhase('closing');
+      setTimeout(() => {
+        setTransitionPhase('covered');
+        setCurrentNodeId('boot-init');
+        setTimeout(() => {
+          setTransitionPhase('opening');
+          setTimeout(() => {
+            setTransitionPhase('idle');
+          }, 320);
+        }, 100);
+      }, 320);
     }
   };
 
@@ -160,17 +226,7 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
   };
 
   // Determine background
-  const bgImage = currentNode.bgImage || (
-    currentNode.location === 'kantor'
-      ? '/assets/bg-kantor.jpg'
-      : currentNode.location === 'cafe-little-cave'
-        ? '/assets/bg-cafe.jpg'
-        : currentNode.location === 'tropodo'
-          ? '/assets/bg-tropodo.jpg'
-          : currentNode.location === 'malang'
-            ? '/assets/bg-malang.jpg'
-            : null
-  );
+  const bgImage = currentNode.bgImage || getDefaultBg(currentNode.location);
 
   const isModalActive = 
     currentNode.isMemoryHub || 
@@ -181,6 +237,8 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
     currentNode.phase === 'save-screen' || 
     currentNode.phase === 'credits' ||
     showChapterCard;
+
+  const isBedroom = Boolean(bgImage?.includes('kamar') || currentNode.bgImage?.includes('kamar'));
 
   return (
     <div
@@ -196,12 +254,11 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
       {/* CRT Scanlines Overlay */}
       <div className="crt-scanlines" />
 
-      {/* Cinematic Scene Transition Overlay */}
+      {/* Cinematic Scene Transition Overlay (Zero-leakage 4-phase curtain) */}
       <SceneTransition
         type={transitionType}
-        isActive={isTransitionActive}
-        duration={500}
-        onFinished={() => setIsTransitionActive(false)}
+        phase={transitionPhase}
+        duration={320}
       />
 
       {/* Chapter Transition Card */}
@@ -244,13 +301,15 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
             style={{
               objectFit: 'cover',
               objectPosition: 'center',
+              imageRendering: 'pixelated',
             }}
           />
-          {/* Subtle vignette gradient */}
+          {/* Subtle edge shadow only at extreme borders to preserve image clarity */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.08) 0%, rgba(7,9,19,0.75) 100%)',
+            pointerEvents: 'none',
+            boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.4)',
           }} />
         </div>
       ) : (
@@ -282,16 +341,6 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
         onToggleMute={handleToggleMute}
         onRestart={handleRestart}
       />
-
-      {/* Character Sprites Layer (Above background, below dialogue) */}
-      {!isModalActive && currentNode.location !== 'system-void' && (
-        <CharacterSprites
-          speaker={currentNode.speaker}
-          speakerAvatar={currentNode.speakerAvatar}
-          textType={currentNode.textType}
-          location={currentNode.location}
-        />
-      )}
 
       {/* Top-Right Floating System Panel */}
       {currentNode.systemBox && !isModalActive && (
@@ -374,18 +423,60 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
         <CreditsScreen onRestart={handleRestart} />
       )}
 
-      {/* Bottom Dialogue Box (Visible when not in full modal screens) */}
+      {/* Bottom Visual Novel HUD: Dialogue Box flanked directly by Cegil & Ali Portraits */}
       {!isModalActive && (
-        <DialogueBox
-          speaker={currentNode.speaker}
-          speakerTitle={currentNode.speakerTitle}
-          speakerAvatar={currentNode.speakerAvatar}
-          textType={currentNode.textType}
-          text={currentNode.text}
-          narration={currentNode.narration}
-          onComplete={handleNext}
-          canAdvance={Boolean(currentNode.onNext)}
-        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '16px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 32px)',
+            maxWidth: '1280px',
+            height: '200px',
+            display: 'flex',
+            alignItems: 'stretch',
+            gap: '12px',
+            zIndex: 40,
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Cegil Portrait Card (Left) */}
+          {currentNode.location !== 'system-void' && !currentNode.hideCegil && (
+            <CharacterPortrait
+              character="cegil"
+              name="CEGIL"
+              speaker={currentNode.speaker}
+              speakerAvatar={currentNode.speakerAvatar}
+              textType={currentNode.textType}
+            />
+          )}
+
+          {/* Central Dialogue Box */}
+          <div style={{ flex: 1, minWidth: 0, height: '100%' }}>
+            <DialogueBox
+              speaker={currentNode.speaker}
+              speakerTitle={currentNode.speakerTitle}
+              speakerAvatar={currentNode.speakerAvatar}
+              textType={currentNode.textType}
+              text={currentNode.text}
+              narration={currentNode.narration}
+              onComplete={handleNext}
+              canAdvance={Boolean(currentNode.onNext)}
+            />
+          </div>
+
+          {/* Ali Portrait Card (Right) - Automatically hidden in Cegil's bedroom */}
+          {currentNode.location !== 'system-void' && !currentNode.hideAli && !isBedroom && (
+            <CharacterPortrait
+              character="ali"
+              name="ALI"
+              speaker={currentNode.speaker}
+              speakerAvatar={currentNode.speakerAvatar}
+              textType={currentNode.textType}
+            />
+          )}
+        </div>
       )}
     </div>
   );

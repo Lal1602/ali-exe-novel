@@ -112,18 +112,13 @@ export const DialogueBox: React.FC<DialogueBoxProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleAdvance]);
 
-  // Common fixed-size container style (never expands/shrinks, never covers characters)
+  // Common fixed-size container style (fills its flex slot beside portraits)
   const containerStyle: React.CSSProperties = {
-    position: 'absolute',
-    bottom: '16px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: 'calc(100% - 64px)',
-    maxWidth: '1040px',
-    height: '200px', // Strict constant height!
+    position: 'relative',
+    width: '100%',
+    height: '100%',
     minHeight: '200px',
     maxHeight: '200px',
-    zIndex: 40,
     cursor: canAdvance ? 'pointer' : 'default',
     boxSizing: 'border-box',
   };

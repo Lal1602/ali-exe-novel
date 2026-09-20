@@ -40,26 +40,9 @@ img {
   image-rendering: crisp-edges;
 }
 
-/* CRT Scanline effect */
+/* CRT Scanline effect (Disabled to eliminate blur/buram and restore razor-sharp pixel art clarity) */
 .crt-scanlines {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
-  ), linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.03),
-    rgba(0, 255, 0, 0.01),
-    rgba(0, 0, 255, 0.03)
-  );
-  background-size: 100% 3px, 6px 100%;
-  z-index: 99;
-  opacity: 0.6;
+  display: none;
 }
 
 /* Retro Pixel Border Box */
@@ -149,18 +132,25 @@ img {
 /* Mode 1: Dialogue (Chat) */
 .dialogue-box-chat {
   border: 3px solid #7aa2f7;
-  background: rgba(15, 18, 32, 0.95);
+  background: rgba(15, 18, 32, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 16px rgba(122, 162, 247, 0.15);
 }
 .dialogue-box-chat-cegil {
   border: 3px solid #f7768e;
+  background: rgba(15, 18, 32, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 16px rgba(247, 118, 142, 0.15);
 }
 
 /* Mode 2: Inner-Monologue (Isi Hati) */
 .dialogue-box-inner {
   border: 3px dashed #bb9af7;
-  background: linear-gradient(135deg, rgba(26, 20, 48, 0.94) 0%, rgba(18, 14, 34, 0.96) 100%);
+  background: linear-gradient(135deg, rgba(26, 20, 48, 0.88) 0%, rgba(18, 14, 34, 0.90) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(187, 154, 247, 0.25);
   position: relative;
 }
@@ -179,8 +169,10 @@ img {
 /* Mode 3: Narration (System/World) */
 .dialogue-box-narration {
   border: 3px solid #4deeea;
-  background: #090c16;
-  box-shadow: 0 0 20px rgba(77, 238, 234, 0.25), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  background: rgba(9, 12, 22, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgba(77, 238, 234, 0.25), inset 0 0 20px rgba(0, 0, 0, 0.6);
   font-family: var(--font-pixel);
 }
 
@@ -237,15 +229,45 @@ img {
   to { opacity: 0; }
 }
 
+@keyframes fadeToBlackClose {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeToBlackOpen {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 @keyframes wipeRightIn {
   from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
   to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+@keyframes wipeRightClose {
+  from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+  to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+@keyframes wipeRightOpen {
+  from { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  to { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
 }
 
 @keyframes flashWhiteIn {
   0% { opacity: 0; background: #ffffff; }
   40% { opacity: 0.95; background: #ffffff; }
   100% { opacity: 0; background: #ffffff; }
+}
+@keyframes flashWhiteClose {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes flashWhiteOpen {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes soundWaveBar {
+  0% { height: 3px; }
+  100% { height: 11px; }
 }
 
 @keyframes vignettePulseIn {

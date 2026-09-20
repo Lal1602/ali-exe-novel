@@ -3,160 +3,237 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface CharacterSpritesProps {
+export interface CharacterPortraitProps {
+  character: 'cegil' | 'ali';
+  name: string;
   speaker?: string;
   speakerAvatar?: 'ali' | 'cegil' | null;
   textType?: 'dialogue' | 'inner-monologue' | 'narration';
-  location?: string;
 }
 
-export const CharacterSprites: React.FC<CharacterSpritesProps> = ({
+export const CharacterPortrait: React.FC<CharacterPortraitProps> = ({
+  character,
+  name,
   speaker,
   speakerAvatar,
   textType = 'dialogue',
 }) => {
   const isSpokenDialogue = textType === 'dialogue' && speaker !== 'Narator' && speaker !== 'System';
-  const isAliSpeaking = isSpokenDialogue && (speaker === 'Ali' || speakerAvatar === 'ali');
-  const isCegilSpeaking = isSpokenDialogue && !isAliSpeaking && (speaker === 'Cegil' || speakerAvatar === 'cegil');
+
+  const isCegil = character === 'cegil';
+  const isAli = character === 'ali';
+
+  const isSpeaking = isSpokenDialogue && (
+    isCegil
+      ? (speaker === 'Cegil' || speakerAvatar === 'cegil')
+      : (speaker === 'Ali' || speakerAvatar === 'ali')
+  );
+
+  const isThinking = isCegil && textType === 'inner-monologue';
+
+  const isOtherSpeaking = isSpokenDialogue && (
+    isCegil
+      ? (speaker === 'Ali' || speakerAvatar === 'ali')
+      : (speaker === 'Cegil' || speakerAvatar === 'cegil')
+  );
+
+  const imageSrc = isCegil ? '/assets/portrait-cegil-glasses.jpg' : '/assets/portrait-ali-glasses.jpg';
+  const accentColor = isCegil ? '#f7768e' : '#7aa2f7';
+  const thinkingColor = '#bb9af7';
+
+  // Dynamic status text
+  let statusText = '○ IDLE';
+  let statusColor = '#565f89';
+  if (isSpeaking) {
+    statusText = '● BERBICARA';
+    statusColor = accentColor;
+  } else if (isThinking) {
+    statusText = '💭 KATA HATI';
+    statusColor = thinkingColor;
+  } else if (isOtherSpeaking) {
+    statusText = '○ MENDENGARKAN';
+    statusColor = '#7982a9';
+  }
+
+  // Dynamic Border & Shadow
+  let borderColor = '#282e44';
+  let boxShadow = '0 6px 20px rgba(0, 0, 0, 0.55)';
+  if (isSpeaking) {
+    borderColor = accentColor;
+    boxShadow = `0 0 16px ${accentColor}80, inset 0 0 10px ${accentColor}33`;
+  } else if (isThinking) {
+    borderColor = thinkingColor;
+    boxShadow = `0 0 14px ${thinkingColor}66, inset 0 0 8px ${thinkingColor}22`;
+  } else if (isOtherSpeaking) {
+    borderColor = '#1f2335';
+  }
 
   return (
     <div
       style={{
-        position: 'absolute',
-        bottom: '224px', // Sits cleanly ABOVE the fixed 200px dialogue box (bottom: 16px + height: 200px = 216px)
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 'calc(100% - 64px)',
-        maxWidth: '1040px',
-        height: '210px',
+        width: '145px',
+        minWidth: '145px',
+        maxWidth: '145px',
+        height: '100%',
+        minHeight: '200px',
+        maxHeight: '200px',
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        pointerEvents: 'none',
-        zIndex: 25,
+        flexDirection: 'column',
+        borderRadius: '6px',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        backgroundColor: 'rgba(15, 18, 32, 0.94)',
+        backdropFilter: 'blur(10px)',
+        border: `2px solid ${borderColor}`,
+        boxShadow,
+        transition: 'all 0.25s cubic-bezier(0.25, 1, 0.5, 1)',
+        transform: isSpeaking ? 'translateY(-2px)' : 'none',
+        position: 'relative',
+        zIndex: 42,
+        flexShrink: 0,
       }}
     >
-      {/* Cegil Sprite (Left) */}
+      {/* Top Header Tag */}
       <div
         style={{
+          height: '28px',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
-          transform: isCegilSpeaking ? 'translateY(-6px) scale(1.03)' : 'translateY(0) scale(1)',
-          filter: isCegilSpeaking
-            ? 'brightness(1.12) contrast(1.08) drop-shadow(0 0 16px rgba(247, 118, 142, 0.6))'
-            : isSpokenDialogue && isAliSpeaking
-              ? 'brightness(0.42) grayscale(0.35)'
-              : 'brightness(0.68) contrast(0.95)', // Calm neutral ambient when narrator or kata hati
-          opacity: 1,
+          justifyContent: 'space-between',
+          padding: '0 8px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: isSpeaking
+            ? isCegil ? 'rgba(247, 118, 142, 0.18)' : 'rgba(122, 162, 247, 0.18)'
+            : isThinking
+              ? 'rgba(187, 154, 247, 0.15)'
+              : 'rgba(26, 27, 38, 0.75)',
         }}
       >
-        {/* Nameplate only appears when speaking out loud */}
-        {isCegilSpeaking && (
-          <div
-            style={{
-              fontFamily: 'var(--font-pixel)',
-              fontSize: '0.62rem',
-              color: '#f7768e',
-              background: 'rgba(26, 27, 38, 0.95)',
-              border: '2px solid #f7768e',
-              padding: '3px 10px',
-              borderRadius: '2px',
-              marginBottom: '6px',
-              boxShadow: '0 0 10px rgba(247, 118, 142, 0.5)',
-              animation: 'spriteBounce 0.25s ease-out',
-            }}
-          >
-            CEGIL
-          </div>
-        )}
-
-        {/* Bust Frame */}
-        <div
+        <span
           style={{
-            width: '165px',
-            height: '190px',
-            position: 'relative',
-            border: isCegilSpeaking ? '3px solid #f7768e' : '2px solid #3b4261',
-            borderRadius: '4px 4px 0 0',
-            overflow: 'hidden',
-            backgroundColor: '#1a1b26',
-            boxShadow: isCegilSpeaking ? '0 0 16px rgba(247, 118, 142, 0.4)' : 'none',
+            fontFamily: 'var(--font-pixel)',
+            fontSize: '0.62rem',
+            letterSpacing: '1px',
+            color: isSpeaking ? accentColor : isThinking ? thinkingColor : '#94a3b8',
+            textShadow: isSpeaking ? `0 0 8px ${accentColor}` : 'none',
           }}
         >
-          <Image
-            src="/assets/portrait-cegil-glasses.jpg"
-            alt="Cegil Bust"
-            fill
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center top',
-            }}
-          />
+          {name}
+        </span>
+
+        {/* Dynamic Voice Equalizer / Speaking Indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '12px' }}>
+          {isSpeaking ? (
+            <>
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '3px',
+                  backgroundColor: accentColor,
+                  borderRadius: '1px',
+                  animation: 'soundWaveBar 0.45s ease-in-out infinite alternate',
+                  animationDelay: '0s',
+                }}
+              />
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '3px',
+                  backgroundColor: accentColor,
+                  borderRadius: '1px',
+                  animation: 'soundWaveBar 0.45s ease-in-out infinite alternate',
+                  animationDelay: '0.15s',
+                }}
+              />
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '3px',
+                  backgroundColor: accentColor,
+                  borderRadius: '1px',
+                  animation: 'soundWaveBar 0.45s ease-in-out infinite alternate',
+                  animationDelay: '0.30s',
+                }}
+              />
+            </>
+          ) : isThinking ? (
+            <span style={{ fontSize: '0.65rem', color: thinkingColor, animation: 'pulse 1.2s infinite' }}>
+              ♡
+            </span>
+          ) : (
+            <span style={{ fontSize: '0.55rem', color: '#565f89' }}>
+              {isOtherSpeaking ? '○' : '·'}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Ali Sprite (Right) */}
+      {/* Portrait Image Frame */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
-          transform: isAliSpeaking ? 'translateY(-6px) scale(1.03)' : 'translateY(0) scale(1)',
-          filter: isAliSpeaking
-            ? 'brightness(1.12) contrast(1.08) drop-shadow(0 0 16px rgba(122, 162, 247, 0.6))'
-            : isSpokenDialogue && isCegilSpeaking
-              ? 'brightness(0.42) grayscale(0.35)'
-              : 'brightness(0.68) contrast(0.95)', // Calm neutral ambient when narrator or kata hati
-          opacity: 1,
+          flex: 1,
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundColor: '#0a0d18',
         }}
       >
-        {/* Nameplate only appears when speaking out loud */}
-        {isAliSpeaking && (
-          <div
-            style={{
-              fontFamily: 'var(--font-pixel)',
-              fontSize: '0.62rem',
-              color: '#7aa2f7',
-              background: 'rgba(26, 27, 38, 0.95)',
-              border: '2px solid #7aa2f7',
-              padding: '3px 10px',
-              borderRadius: '2px',
-              marginBottom: '6px',
-              boxShadow: '0 0 10px rgba(122, 162, 247, 0.5)',
-              animation: 'spriteBounce 0.25s ease-out',
-            }}
-          >
-            ALI
-          </div>
-        )}
+        <Image
+          src={imageSrc}
+          alt={name}
+          fill
+          unoptimized
+          style={{
+            objectFit: 'cover',
+            objectPosition: isCegil ? 'center 12%' : 'center 8%',
+            filter: isSpeaking
+              ? 'brightness(1.12) contrast(1.06)'
+              : isThinking
+                ? 'brightness(1.02) contrast(1.0)'
+                : isOtherSpeaking
+                  ? 'brightness(0.52) contrast(0.88) grayscale(0.3)'
+                  : 'brightness(0.82)',
+            transition: 'filter 0.25s ease',
+          }}
+        />
 
-        {/* Bust Frame */}
+        {/* Subtle scanline overlay for retro CRT aesthetic */}
         <div
           style={{
-            width: '165px',
-            height: '190px',
-            position: 'relative',
-            border: isAliSpeaking ? '3px solid #7aa2f7' : '2px solid #3b4261',
-            borderRadius: '4px 4px 0 0',
-            overflow: 'hidden',
-            backgroundColor: '#1a1b26',
-            boxShadow: isAliSpeaking ? '0 0 16px rgba(122, 162, 247, 0.4)' : 'none',
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%)',
+            backgroundSize: '100% 4px',
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
+
+      {/* Bottom Status Bar */}
+      <div
+        style={{
+          height: '22px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'rgba(10, 12, 22, 0.95)',
+          padding: '0 4px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-pixel)',
+            fontSize: '0.50rem',
+            letterSpacing: '0.5px',
+            color: statusColor,
           }}
         >
-          <Image
-            src="/assets/portrait-ali-glasses.jpg"
-            alt="Ali Bust"
-            fill
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center top',
-            }}
-          />
-        </div>
+          {statusText}
+        </span>
       </div>
     </div>
   );
 };
+
+// Also export CharacterSprites as CharacterPortrait for backward compatibility
+export const CharacterSprites = CharacterPortrait;

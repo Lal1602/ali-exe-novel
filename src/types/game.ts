@@ -53,6 +53,8 @@ export interface StoryNode {
   speakerTitle?: string;
   speakerAvatar?: 'ali' | 'cegil' | null;
   textType?: 'dialogue' | 'inner-monologue' | 'narration';
+  hideAli?: boolean;
+  hideCegil?: boolean;
   text: string;
   narration?: string[];
   systemBox?: SystemBoxData;
