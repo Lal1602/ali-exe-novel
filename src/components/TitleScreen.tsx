@@ -1,20 +1,60 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { sound } from '@/utils/audio';
+import { hasSavedGame, loadGameState, clearGameState, SaveState } from '@/utils/storage';
+import { preloadCriticalAssets } from '@/utils/preloader';
 
 interface TitleScreenProps {
-  onStart: () => void;
+  onStart: (continueFromSave?: boolean) => void;
 }
 
 export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [savedData, setSavedData] = useState<SaveState | null>(null);
+  const [showConfirmReset, setShowConfirmReset] = useState(false);
+  const [preloadStatus, setPreloadStatus] = useState<{ loaded: number; total: number; done: boolean }>({
+    loaded: 0,
+    total: 11,
+    done: false,
+  });
+
+  useEffect(() => {
+    // Check for saved progress
+    if (hasSavedGame()) {
+      const data = loadGameState();
+      setSavedData(data);
+    }
+
+    // Start non-blocking background asset preloading
+    preloadCriticalAssets((loaded, total) => {
+      setPreloadStatus({
+        loaded,
+        total,
+        done: loaded >= total,
+      });
+    });
+  }, []);
 
   const handleStartGame = () => {
     sound.playClick();
     sound.playFanfare();
-    onStart();
+    onStart(false);
+  };
+
+  const handleContinueGame = () => {
+    sound.playClick();
+    sound.playFanfare();
+    onStart(true);
+  };
+
+  const handleConfirmReset = () => {
+    sound.playClick();
+    clearGameState();
+    setSavedData(null);
+    setShowConfirmReset(false);
+    onStart(false);
   };
 
   return (
@@ -43,6 +83,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
           alt="Title Background"
           fill
           priority
+          unoptimized
           style={{ objectFit: 'cover' }}
         />
       </div>
@@ -136,7 +177,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
           fontSize: '0.95rem',
           maxWidth: '560px',
           lineHeight: 1.6,
-          marginBottom: '36px',
+          marginBottom: '32px',
         }}>
           “Dulu cuma teman kerja yang ga pernah ngobrol. Sampai kopi demi kopi, 50% di Tropodo, dan malam berbintang di Malang mengubah segalanya...”
         </p>
@@ -145,22 +186,73 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
         <div style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '14px',
-          width: '260px',
+          gap: '12px',
+          width: '280px',
         }}>
-          <button
-            onClick={handleStartGame}
-            className="pixel-btn pixel-btn-primary"
-            style={{
-              padding: '16px 24px',
-              fontSize: '0.82rem',
-              letterSpacing: '2px',
-              cursor: 'pointer',
-            }}
-          >
-            ▶ START GAME
-          </button>
+          {savedData ? (
+            <>
+              {/* Continue Saved Game Button */}
+              <button
+                onClick={handleContinueGame}
+                className="pixel-btn pixel-btn-primary"
+                style={{
+                  padding: '16px 20px',
+                  fontSize: '0.80rem',
+                  letterSpacing: '1px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: '0 0 18px rgba(247, 118, 142, 0.6)',
+                }}
+              >
+                <span>▶ LANJUTKAN CERITA</span>
+                <span style={{
+                  fontSize: '0.52rem',
+                  color: '#ffe600',
+                  letterSpacing: '0.5px',
+                  textShadow: 'none',
+                }}>
+                  [{savedData.previewTitle || savedData.location || 'PROGRES TERSIMPAN'} • ❤️ {savedData.affection}%]
+                </span>
+              </button>
 
+              {/* Start Fresh Button */}
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setShowConfirmReset(true);
+                }}
+                className="pixel-btn"
+                style={{
+                  padding: '12px 18px',
+                  fontSize: '0.66rem',
+                  letterSpacing: '1px',
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                }}
+              >
+                ↺ MULAI DARI AWAL
+              </button>
+            </>
+          ) : (
+            /* Start Game (No prior save) */
+            <button
+              onClick={handleStartGame}
+              className="pixel-btn pixel-btn-primary"
+              style={{
+                padding: '16px 24px',
+                fontSize: '0.82rem',
+                letterSpacing: '2px',
+                cursor: 'pointer',
+              }}
+            >
+              ▶ START GAME
+            </button>
+          )}
+
+          {/* How to Play Button */}
           <button
             onClick={() => {
               sound.playClick();
@@ -169,7 +261,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
             className="pixel-btn"
             style={{
               padding: '12px 20px',
-              fontSize: '0.68rem',
+              fontSize: '0.66rem',
               letterSpacing: '1px',
               cursor: 'pointer',
             }}
@@ -178,20 +270,104 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
           </button>
         </div>
 
-        {/* Footer Meta */}
+        {/* Footer Meta & Asset Preloader Indicator */}
         <div style={{
-          marginTop: '42px',
-          fontSize: '0.55rem',
+          marginTop: '36px',
+          fontSize: '0.54rem',
           color: '#64748b',
           letterSpacing: '1px',
           display: 'flex',
           flexDirection: 'column',
+          alignItems: 'center',
           gap: '6px',
         }}>
+          {/* Caching Status */}
+          <div style={{
+            color: preloadStatus.done ? '#73daca' : '#bb9af7',
+            background: 'rgba(26, 27, 38, 0.75)',
+            border: `1px solid ${preloadStatus.done ? '#73daca44' : '#bb9af744'}`,
+            padding: '3px 10px',
+            borderRadius: '3px',
+            letterSpacing: '1px',
+          }}>
+            {preloadStatus.done
+              ? '✦ ASET CERITA: 100% CACHED & SIAP OFFLINE/DEPLOY ✦'
+              : `✦ MEMUAT CACHE ASET (${preloadStatus.loaded}/${preloadStatus.total})... ✦`}
+          </div>
+
           <div>BUILD 2026.10.24 — FOR ALI (23 TAHUN)</div>
           <div style={{ color: '#f7768e' }}>MADE WITH LOVE BY YOUR CEGIL ♡</div>
         </div>
       </div>
+
+      {/* Confirmation Modal to Restart Game */}
+      {showConfirmReset && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 60,
+          backgroundColor: 'rgba(5, 7, 14, 0.90)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+        }}>
+          <div
+            className="pixel-box"
+            style={{
+              width: '100%',
+              maxWidth: '440px',
+              padding: '28px',
+              backgroundColor: '#111422',
+              border: '3px solid #f7768e',
+              boxShadow: '0 0 24px rgba(247, 118, 142, 0.4)',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{
+              color: '#f7768e',
+              fontSize: '0.78rem',
+              marginBottom: '14px',
+              letterSpacing: '1px',
+            }}>
+              ⚠️ KONFIRMASI MULAI ULANG
+            </div>
+            <p style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.92rem',
+              color: '#cbd5e1',
+              lineHeight: 1.6,
+              marginBottom: '24px',
+            }}>
+              Apakah kamu yakin ingin mengulang cerita dari awal?
+              <br />
+              <span style={{ color: '#94a3b8', fontSize: '0.82rem' }}>
+                (Progres cerita dan skor afeksi terakhir akan di-reset).
+              </span>
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setShowConfirmReset(false);
+                }}
+                className="pixel-btn"
+                style={{ padding: '10px 18px', fontSize: '0.68rem' }}
+              >
+                BATAL
+              </button>
+              <button
+                onClick={handleConfirmReset}
+                className="pixel-btn pixel-btn-primary"
+                style={{ padding: '10px 18px', fontSize: '0.68rem', backgroundColor: '#f7768e' }}
+              >
+                YA, MULAI DARI AWAL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* How to Play Modal */}
       {showHowToPlay && (
@@ -251,7 +427,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
                 <strong style={{ color: '#4deeea' }}>• KLIK / [SPACE] / [ENTER]:</strong> Melanjutkan percakapan dan mempercepat ketikan teks.
               </div>
               <div>
-                <strong style={{ color: '#f7768e' }}>• PILIHAN & INTERAKSI:</strong> Pilih respon atau mainkan mini-game di setiap chapter untuk melihat reaksi karakter.
+                <strong style={{ color: '#f7768e' }}>• AUTO-SAVE AKTIF:</strong> Setiap dialog otomatis tersimpan. Kamu bisa reload web kapan saja tanpa takut kehilangan progres.
               </div>
               <div>
                 <strong style={{ color: '#73daca' }}>• MEMORY INVESTIGATION:</strong> Pada Chapter 05, klik dan baca 11 bukti anomali kepribadian Ali.

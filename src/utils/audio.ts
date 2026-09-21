@@ -60,17 +60,22 @@ class SoundManager {
     };
 
     for (const [key, url] of Object.entries(sfxList)) {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) continue;
-        const arrayBuffer = await res.arrayBuffer();
-        if (this.ctx) {
-          const decoded = await this.ctx.decodeAudioData(arrayBuffer);
-          this.sfxBuffers[key] = decoded;
+      const fetchWithRetry = async (attempts = 2): Promise<void> => {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const arrayBuffer = await res.arrayBuffer();
+          if (this.ctx) {
+            const decoded = await this.ctx.decodeAudioData(arrayBuffer);
+            this.sfxBuffers[key] = decoded;
+          }
+        } catch {
+          if (attempts > 0) {
+            setTimeout(() => fetchWithRetry(attempts - 1), 1500);
+          }
         }
-      } catch {
-        // Fallback gracefully to Web Audio synthesis if fetch fails
-      }
+      };
+      fetchWithRetry();
     }
   }
 
@@ -423,7 +428,18 @@ class SoundManager {
       const nextAudio = new Audio(trackUrl);
       nextAudio.loop = true;
       nextAudio.volume = 0;
-      nextAudio.muted = this.isMuted;
+      nextAudio.onerror = () => {
+        // If network error occurred, retry loading the track after 2 seconds
+        setTimeout(() => {
+          if (this.isBgmActive && this.currentTrackKey === mood) {
+            const retryAudio = new Audio(trackUrl);
+            retryAudio.loop = true;
+            retryAudio.volume = 0;
+            retryAudio.muted = this.isMuted;
+            retryAudio.play().then(() => this.crossfadeTo(retryAudio)).catch(() => {});
+          }
+        }, 2000);
+      };
 
       const playPromise = nextAudio.play();
       if (playPromise !== undefined) {

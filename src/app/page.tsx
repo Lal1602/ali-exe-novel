@@ -6,13 +6,25 @@ import { GameContainer } from '@/components/GameContainer';
 
 export default function Home() {
   const [gameStarted, setGameStarted] = useState(false);
+  const [continueFromSave, setContinueFromSave] = useState(false);
+
+  const handleStart = (shouldContinue = false) => {
+    setContinueFromSave(shouldContinue);
+    setGameStarted(true);
+  };
 
   return (
     <main>
       {!gameStarted ? (
-        <TitleScreen onStart={() => setGameStarted(true)} />
+        <TitleScreen onStart={handleStart} />
       ) : (
-        <GameContainer onReturnToTitle={() => setGameStarted(false)} />
+        <GameContainer
+          continueFromSave={continueFromSave}
+          onReturnToTitle={() => {
+            setGameStarted(false);
+            setContinueFromSave(false);
+          }}
+        />
       )}
     </main>
   );

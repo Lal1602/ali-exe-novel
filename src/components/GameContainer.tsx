@@ -6,6 +6,8 @@ import confetti from 'canvas-confetti';
 import { STORY_NODES } from '@/data/scenes';
 import { StoryNode, ChoiceOption, TransitionType } from '@/types/game';
 import { sound } from '@/utils/audio';
+import { saveGameState, loadGameState, clearGameState } from '@/utils/storage';
+import { prefetchNextSceneAssets } from '@/utils/preloader';
 import { AffectionHUD } from './AffectionHUD';
 import { DialogueBox } from './DialogueBox';
 import { SystemBox } from './SystemBox';
@@ -46,7 +48,12 @@ const getDefaultBg = (location?: string) => {
   }
 };
 
-export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onReturnToTitle }) => {
+interface GameContainerProps {
+  continueFromSave?: boolean;
+  onReturnToTitle?: () => void;
+}
+
+export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave = false, onReturnToTitle }) => {
   const [currentNodeId, setCurrentNodeId] = useState<string>('boot-init');
   const [affection, setAffection] = useState<number>(0);
   const [prevAffection, setPrevAffection] = useState<number>(0);
@@ -56,6 +63,10 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [hasStartedAudio, setHasStartedAudio] = useState<boolean>(false);
 
+  // Background image loading error state & retry counter
+  const [imageError, setImageError] = useState<boolean>(false);
+  const [imageRetryKey, setImageRetryKey] = useState<number>(0);
+
   // Transition state machine
   const [transitionType, setTransitionType] = useState<TransitionType>('fade-black');
   const [transitionPhase, setTransitionPhase] = useState<TransitionPhase>('idle');
@@ -64,7 +75,59 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
   const [showChapterCard, setShowChapterCard] = useState<boolean>(false);
   const chapterSeenRef = useRef<Set<string>>(new Set());
 
+  // Restore game state from localStorage if continueFromSave was selected
+  useEffect(() => {
+    if (continueFromSave) {
+      const saved = loadGameState();
+      if (saved && STORY_NODES[saved.currentNodeId]) {
+        setCurrentNodeId(saved.currentNodeId);
+        setAffection(saved.affection ?? 0);
+        setPrevAffection(saved.prevAffection ?? 0);
+        if (Array.isArray(saved.chapterSeen)) {
+          saved.chapterSeen.forEach((id) => chapterSeenRef.current.add(id));
+        }
+        if (typeof saved.isMuted === 'boolean' && saved.isMuted !== sound.getMuted()) {
+          sound.toggleMute();
+          setIsMuted(saved.isMuted);
+        }
+      }
+    }
+  }, [continueFromSave]);
+
   const currentNode: StoryNode = STORY_NODES[currentNodeId] || STORY_NODES['boot-init'];
+
+  // Auto-Save progress to localStorage whenever scene or affection changes
+  useEffect(() => {
+    if (currentNodeId && currentNodeId !== 'boot-init') {
+      const node = STORY_NODES[currentNodeId];
+      if (node) {
+        saveGameState({
+          currentNodeId,
+          affection,
+          prevAffection,
+          chapterSeen: Array.from(chapterSeenRef.current),
+          isMuted,
+          timestamp: Date.now(),
+          location: node.location,
+          phase: node.phase,
+          previewTitle: node.chapterMeta?.title
+            ? `${node.chapterMeta.title}: ${node.chapterMeta.subtitle}`
+            : (node.location || 'Surabaya').toUpperCase(),
+        });
+      }
+    }
+  }, [currentNodeId, affection, prevAffection, isMuted]);
+
+  // Speculative asset prefetching for upcoming scene while player is reading current dialogue
+  useEffect(() => {
+    if (currentNode.onNext) {
+      const nextNode = STORY_NODES[currentNode.onNext];
+      if (nextNode) {
+        const nextBg = nextNode.bgImage || getDefaultBg(nextNode.location);
+        if (nextBg) prefetchNextSceneAssets(nextBg);
+      }
+    }
+  }, [currentNode]);
 
   // Start audio on first user click
   const ensureAudio = useCallback(() => {
@@ -166,6 +229,9 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
         // Swap the scene node in the DOM behind the 100% solid curtain
         setCurrentNodeId(targetNodeId);
 
+        // Reset image error state for the new background
+        setImageError(false);
+
         // Hold in solid blackout for 100ms so Next.js Image decode and DOM painting finish
         setTimeout(() => {
           // Phase 3: Open curtain smoothly revealing the ready scene
@@ -179,6 +245,7 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
       }, closeDuration);
     } else {
       setCurrentNodeId(targetNodeId);
+      setImageError(false);
     }
   };
 
@@ -202,6 +269,7 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
     setPrevAffection(0);
     setShowChapterCard(false);
     sound.playClick();
+    clearGameState(); // Clear persistent save data on restart
     if (onReturnToTitle) {
       onReturnToTitle();
     } else {
@@ -293,11 +361,13 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
           filter: 'brightness(0.88) contrast(1.05)',
         }}>
           <Image
+            key={`${bgImage}-${imageRetryKey}`}
             src={bgImage}
             alt={currentNode.location}
             fill
             priority
             unoptimized
+            onError={() => setImageError(true)}
             style={{
               objectFit: 'cover',
               objectPosition: 'center',
@@ -326,6 +396,43 @@ export const GameContainer: React.FC<{ onReturnToTitle?: () => void }> = ({ onRe
             backgroundImage: 'linear-gradient(to right, rgba(77, 238, 234, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(77, 238, 234, 0.05) 1px, transparent 1px)',
             backgroundSize: '32px 32px',
           }} />
+        </div>
+      )}
+
+      {/* Network Image Load Failure Notification & Retry Button */}
+      {imageError && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '78px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 48,
+            backgroundColor: 'rgba(26, 27, 38, 0.94)',
+            border: '2px solid #f7768e',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            fontFamily: 'var(--font-pixel)',
+            fontSize: '0.62rem',
+            color: '#f7768e',
+            boxShadow: '0 0 16px rgba(247, 118, 142, 0.5)',
+          }}
+        >
+          <span>⚠️ KONEKSI TERPUTUS — GAMBAR LATAR BELUM TERMUAT</span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setImageError(false);
+              setImageRetryKey((k) => k + 1);
+            }}
+            className="pixel-btn pixel-btn-primary"
+            style={{ fontSize: '0.55rem', padding: '4px 8px', cursor: 'pointer' }}
+          >
+            ↺ MUAT ULANG GAMBAR
+          </button>
         </div>
       )}
 
