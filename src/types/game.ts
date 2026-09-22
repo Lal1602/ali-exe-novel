@@ -101,3 +101,16 @@ export interface MemoryFragment {
   statGain?: { label: string; value: string };
   unlocked: boolean;
 }
+
+export interface DialogueLogEntry {
+  id: string;
+  speaker?: string;
+  speakerTitle?: string;
+  speakerAvatar?: 'ali' | 'cegil' | null;
+  textType?: 'dialogue' | 'inner-monologue' | 'narration';
+  text: string;
+  narration?: string[];
+  location?: GameLocation;
+  phase?: GamePhase;
+}
+

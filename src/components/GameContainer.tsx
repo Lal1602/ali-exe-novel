@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import confetti from 'canvas-confetti';
 import { STORY_NODES } from '@/data/scenes';
-import { StoryNode, ChoiceOption, TransitionType } from '@/types/game';
+import { StoryNode, ChoiceOption, TransitionType, DialogueLogEntry } from '@/types/game';
 import { sound } from '@/utils/audio';
 import { saveGameState, loadGameState, clearGameState } from '@/utils/storage';
 import { prefetchNextSceneAssets } from '@/utils/preloader';
@@ -22,6 +22,8 @@ import { ChapterCard } from './ChapterCard';
 import { CharacterPortrait } from './CharacterSprites';
 import { AmbientElements } from './AmbientElements';
 import { AffectionToast } from './AffectionToast';
+import { NowPlayingToast } from './NowPlayingToast';
+import { DialogueHistoryModal } from './DialogueHistoryModal';
 
 // Mini-game interactions
 import { CoffeeOrderPuzzle } from './interactions/CoffeeOrderPuzzle';
@@ -75,6 +77,15 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
   const [showChapterCard, setShowChapterCard] = useState<boolean>(false);
   const chapterSeenRef = useRef<Set<string>>(new Set());
 
+  // Dialogue backlog history & log modal
+  const [dialogueHistory, setDialogueHistory] = useState<DialogueLogEntry[]>([]);
+  const [showLogModal, setShowLogModal] = useState<boolean>(false);
+
+  // Now Playing music track notification
+  const [nowPlayingMood, setNowPlayingMood] = useState<string | null>(null);
+  const [showNowPlaying, setShowNowPlaying] = useState<boolean>(false);
+  const prevMoodRef = useRef<string | null>(null);
+
   // Restore game state from localStorage if continueFromSave was selected
   useEffect(() => {
     if (continueFromSave) {
@@ -86,6 +97,9 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
         if (Array.isArray(saved.chapterSeen)) {
           saved.chapterSeen.forEach((id) => chapterSeenRef.current.add(id));
         }
+        if (Array.isArray(saved.dialogueHistory)) {
+          setDialogueHistory(saved.dialogueHistory);
+        }
         if (typeof saved.isMuted === 'boolean' && saved.isMuted !== sound.getMuted()) {
           sound.toggleMute();
           setIsMuted(saved.isMuted);
@@ -96,7 +110,31 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
 
   const currentNode: StoryNode = STORY_NODES[currentNodeId] || STORY_NODES['boot-init'];
 
-  // Auto-Save progress to localStorage whenever scene or affection changes
+  // Record dialogue entries to backlog history
+  useEffect(() => {
+    if (currentNode && currentNode.text && currentNodeId !== 'boot-init') {
+      setDialogueHistory((prev) => {
+        const last = prev[prev.length - 1];
+        if (last && last.id === currentNode.id) return prev;
+        return [
+          ...prev,
+          {
+            id: currentNode.id,
+            speaker: currentNode.speaker,
+            speakerTitle: currentNode.speakerTitle,
+            speakerAvatar: currentNode.speakerAvatar,
+            textType: currentNode.textType,
+            text: currentNode.text,
+            narration: currentNode.narration,
+            location: currentNode.location,
+            phase: currentNode.phase,
+          },
+        ];
+      });
+    }
+  }, [currentNode, currentNodeId]);
+
+  // Auto-Save progress to localStorage whenever scene, affection, or dialogueHistory changes
   useEffect(() => {
     if (currentNodeId && currentNodeId !== 'boot-init') {
       const node = STORY_NODES[currentNodeId];
@@ -113,10 +151,11 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
           previewTitle: node.chapterMeta?.title
             ? `${node.chapterMeta.title}: ${node.chapterMeta.subtitle}`
             : (node.location || 'Surabaya').toUpperCase(),
+          dialogueHistory,
         });
       }
     }
-  }, [currentNodeId, affection, prevAffection, isMuted]);
+  }, [currentNodeId, affection, prevAffection, isMuted, dialogueHistory]);
 
   // Speculative asset prefetching for upcoming scene while player is reading current dialogue
   useEffect(() => {
@@ -137,10 +176,15 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
     }
   }, [hasStartedAudio, currentNode.bgmMood]);
 
-  // Sync BGM mood when scene changes
+  // Sync BGM mood when scene changes & trigger NowPlaying toast
   useEffect(() => {
     if (currentNode.bgmMood) {
       sound.setMood(currentNode.bgmMood);
+      if (prevMoodRef.current !== currentNode.bgmMood) {
+        prevMoodRef.current = currentNode.bgmMood;
+        setNowPlayingMood(currentNode.bgmMood);
+        setShowNowPlaying(true);
+      }
     }
   }, [currentNode.bgmMood]);
 
@@ -151,6 +195,30 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
       setShowChapterCard(true);
     }
   }, [currentNode]);
+
+  // Keyboard shortcut: Press L to toggle Dialogue Backlog History Modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'l' || e.key === 'L') {
+        const isModalOpen =
+          currentNode.isMemoryHub ||
+          currentNode.isQuiz ||
+          currentNode.isInnerChildUnlock ||
+          Boolean(currentNode.choices) ||
+          Boolean(currentNode.interactionType) ||
+          currentNode.phase === 'save-screen' ||
+          currentNode.phase === 'credits' ||
+          showChapterCard;
+
+        if (!isModalOpen) {
+          sound.playClick();
+          setShowLogModal((prev) => !prev);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentNode, showChapterCard]);
 
   // Handle special effects (confetti, heartburst)
   useEffect(() => {
@@ -268,6 +336,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
     setAffection(0);
     setPrevAffection(0);
     setShowChapterCard(false);
+    setDialogueHistory([]);
     sound.playClick();
     clearGameState(); // Clear persistent save data on restart
     if (onReturnToTitle) {
@@ -304,7 +373,8 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
     Boolean(currentNode.interactionType) ||
     currentNode.phase === 'save-screen' || 
     currentNode.phase === 'credits' ||
-    showChapterCard;
+    showChapterCard ||
+    showLogModal;
 
   const isBedroom = Boolean(bgImage?.includes('kamar') || currentNode.bgImage?.includes('kamar'));
 
@@ -339,6 +409,22 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
           affection={currentNode.chapterMeta.affection ?? currentNode.affection}
           bgImage={bgImage || undefined}
           onFinish={() => setShowChapterCard(false)}
+        />
+      )}
+
+      {/* Now Playing Music Notification Toast */}
+      {showNowPlaying && nowPlayingMood && !showChapterCard && (
+        <NowPlayingToast
+          mood={nowPlayingMood}
+          onClose={() => setShowNowPlaying(false)}
+        />
+      )}
+
+      {/* Dialogue Backlog History Modal */}
+      {showLogModal && (
+        <DialogueHistoryModal
+          history={dialogueHistory}
+          onClose={() => setShowLogModal(false)}
         />
       )}
 
@@ -447,6 +533,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
         onRestart={handleRestart}
+        onOpenLog={() => setShowLogModal(true)}
       />
 
       {/* Top-Right Floating System Panel */}

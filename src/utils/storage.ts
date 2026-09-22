@@ -1,4 +1,4 @@
-// LocalStorage persistence manager for ALI.EXE visual novel
+import { DialogueLogEntry } from '@/types/game';
 
 export interface SaveState {
   currentNodeId: string;
@@ -10,6 +10,7 @@ export interface SaveState {
   location?: string;
   phase?: string;
   previewTitle?: string;
+  dialogueHistory?: DialogueLogEntry[];
 }
 
 const SAVE_STORAGE_KEY = 'ali_exe_save_data_v1';

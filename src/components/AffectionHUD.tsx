@@ -12,6 +12,7 @@ interface AffectionHUDProps {
   isMuted: boolean;
   onToggleMute: () => void;
   onRestart: () => void;
+  onOpenLog?: () => void;
 }
 
 const LOCATION_LABELS: Record<GameLocation, { icon: string; name: string; tag: string }> = {
@@ -49,6 +50,7 @@ export const AffectionHUD: React.FC<AffectionHUDProps> = ({
   isMuted,
   onToggleMute,
   onRestart,
+  onOpenLog,
 }) => {
   const loc = LOCATION_LABELS[location] || LOCATION_LABELS['kantor'];
   const title = PHASE_TITLES[phase] || 'ALI.EXE';
@@ -189,14 +191,34 @@ export const AffectionHUD: React.FC<AffectionHUDProps> = ({
       </div>
 
       {/* Right: Audio & Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {onOpenLog && (
+          <button
+            onClick={() => {
+              sound.playClick();
+              onOpenLog();
+            }}
+            className="pixel-btn"
+            style={{
+              fontSize: '0.6rem',
+              padding: '6px 10px',
+              color: '#bb9af7',
+              border: '2px solid #bb9af7',
+              backgroundColor: 'rgba(187, 154, 247, 0.12)',
+            }}
+            title="Lihat Riwayat Percakapan (Shortcut: L)"
+          >
+            📜 LOG [L]
+          </button>
+        )}
+
         <button
           onClick={() => {
             sound.playClick();
             onToggleMute();
           }}
           className="pixel-btn"
-          style={{ fontSize: '0.6rem', padding: '6px 12px' }}
+          style={{ fontSize: '0.6rem', padding: '6px 10px' }}
           title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
         >
           {isMuted ? '🔇 SOUND: OFF' : '🔊 LO-FI: ON'}
