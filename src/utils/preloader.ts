@@ -9,6 +9,7 @@ export const CRITICAL_BACKGROUNDS = [
   '/assets/bg-kamar-cegil.jpg',
   '/assets/bg-kantor-coffee.jpg',
   '/assets/bg-kantor-approach.jpg',
+  '/assets/bg-kantor-night.jpg',
   '/assets/bg-cafe-closing.jpg',
   '/assets/bg-tropodo-dusk.jpg',
 ];

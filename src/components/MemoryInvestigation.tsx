@@ -14,7 +14,7 @@ export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComp
   const [activeMemory, setActiveMemory] = useState<MemoryFragment | null>(null);
 
   const inspectedCount = memories.filter((m) => m.unlocked).length;
-  const canFinish = inspectedCount >= 8; // At least 8 or all 11
+  const canFinish = inspectedCount >= 8; // At least 8 or all memories
 
   const handleOpenMemory = (mem: MemoryFragment) => {
     sound.playClick();
@@ -70,7 +70,7 @@ export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComp
             padding: '8px 14px',
             border: '2px solid #3b4261',
           }}>
-            TERUNGKAP: <span style={{ color: '#4deeea', fontWeight: 'bold' }}>{inspectedCount} / 11</span>
+            TERUNGKAP: <span style={{ color: '#4deeea', fontWeight: 'bold' }}>{inspectedCount} / {memories.length}</span>
           </div>
 
           {canFinish && (
@@ -88,7 +88,7 @@ export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComp
         </div>
       </div>
 
-      {/* Grid of 11 Memory Cards */}
+      {/* Grid of Memory Cards */}
       <div style={{
         flex: 1,
         overflowY: 'auto',

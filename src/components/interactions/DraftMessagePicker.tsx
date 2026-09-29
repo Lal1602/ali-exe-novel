@@ -11,20 +11,20 @@ const DRAFTS = [
   {
     id: 'draft-a',
     title: 'DRAFT A: Tipe Formal & Ragu-ragu',
-    text: '“Masli, nanti sore setelah jam kantor ada waktu luang ga ya? Ada sedikit yang mau aku omongin, tapi santai kok bukan soal kerjaan.”',
+    text: '“Masli, besok sore setelah jam kantor ada waktu luang ga ya? Ada sedikit yang mau aku omongin, tapi santai kok bukan soal kerjaan.”',
     note: 'Dihapus karena terasa kaku banget kayak mau rapat tahunan.',
   },
   {
     id: 'draft-b',
     title: 'DRAFT B: Tipe Santai Tapi Ngeselin',
-    text: '“Masli, sore ini temenin ke Little Cave dong. Gaada penolakan ya, kopinya aku bayarin.”',
+    text: '“Masli, besok sore temenin ke Little Cave dong. Gaada penolakan ya, kopinya aku bayarin.”',
     note: 'Terlalu maksa, tapi seru sih.',
   },
   {
     id: 'draft-c',
-    title: 'DRAFT C: Pilihan Final (Jujur & Berani)',
-    text: '“Masli, nanti sore bisa ketemu di Little Cave sebentar? Ada yang mau aku sampein langsung.”',
-    note: 'Singkat, tegas, dan bikin jantung berdebar kencang saat tombol KIRIM ditekan.',
+    title: 'DRAFT C: Pilihan Final (Modus Reimburse)',
+    text: '“Besok ngopi ayok? Bayar pake uangku dulu, ntar ku reimburse ke kamu hahah.”',
+    note: 'Modus ngajak ngopi gaya baru: maksa reimburse 🙂↔️',
   },
 ];
 
@@ -179,7 +179,7 @@ export const DraftMessagePicker: React.FC<DraftMessagePickerProps> = ({ onComple
             fontSize: '0.68rem',
             animation: 'fadeIn 0.3s ease',
           }}>
-            ✓✓ TERKIRIM. MASLI: “OKE, NANTI KETEMU DI SANA YA.”
+            ✓✓ TERKIRIM. MASLI: “Itu namanya maksa reimburse.”
           </div>
         )}
       </div>

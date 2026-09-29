@@ -225,5 +225,75 @@ export const MEMORY_FRAGMENTS: MemoryFragment[] = [
     ],
     statGain: { label: 'TITLE UNLOCKED', value: 'CEGIL RESMI ALI' },
     unlocked: false,
+  },
+  {
+    id: 'kulkas-2-pintu',
+    number: 12,
+    title: 'KULKAS 2 PINTU',
+    subtitle: 'Ditinggal Ayang Jaga Malam',
+    date: 'Dinas Malam RS',
+    location: 'cafe-little-cave',
+    bgImage: '/assets/bg-cafe.jpg',
+    previewText: '“Yah ditinggal ayang” ucap si kulkas 2 pintu itu...',
+    fullStory: [
+      '“Yah ditinggal ayang,” ucap si kulkas 2 pintu itu waktu tahu aku harus dinas jaga malam di rumah sakit.',
+      'Lucu banget ya tuhan, pria yang biasanya dingin dan lempeng itu bisa mengeluarkan celetukan se-manja itu.',
+      'Mana tadi pas beli kopi bareng, dia ngeliatin wajahku beberapa menit tanpa lepas. You know butter? Nah, itu, melting.'
+    ],
+    dialogue: [
+      { speaker: 'Ali', text: 'Yah... ditinggal ayang...' },
+      { speaker: 'Cegil', text: 'Cuma dinas jaga malam di RS bentar kok mas wkwk...' },
+      { speaker: 'Ali', text: '*(menatap lurus tanpa berkedip sambil memegang kopi)*' },
+      { speaker: 'Cegil', text: '*(Player Status: 100% MELTING BUTTER)*' }
+    ],
+    statGain: { label: 'KULKAS STATUS', value: 'DEFROSTED / 100% MELTING' },
+    unlocked: false,
+  },
+  {
+    id: 'weekend-punyamu',
+    number: 13,
+    title: 'WEEKEND-KU PUNYAMU',
+    subtitle: 'Sabtu Malam',
+    date: 'Weekend Bersama',
+    location: 'tropodo',
+    bgImage: '/assets/bg-tropodo.jpg',
+    previewText: '“Nanti malem mau keluar ga?” — “Terserah. Kan weekend-ku punyamu.”',
+    fullStory: [
+      'Pertanyaan sederhana di hari Sabtu menjelang malam: “Nanti malem mau keluar ga?”',
+      'Dan jawabannya keluar dengan begitu santai tanpa beban, seolah waktu akhir pekannya memang sudah dialokasikan sepenuhnya untuk satu orang.',
+      '“Terserah.. Kan, weekend-ku punyamu.”',
+      'Simple tapi ASHSKEKDKEEKSODK KOK BISA?!'
+    ],
+    dialogue: [
+      { speaker: 'Cegil', text: 'Nanti malem mau keluar ga mas?' },
+      { speaker: 'Ali', text: 'Terserah.. Kan, weekend-ku punyamu.' },
+      { speaker: 'Cegil', text: '*(ASHSKEKDKEEKSODK KOKK BISAAA SALTING BRUTAL)*' }
+    ],
+    statGain: { label: 'WEEKEND OWNERSHIP', value: '100% TRANSFERRED TO CEGIL' },
+    unlocked: false,
+  },
+  {
+    id: 'gae-opo-ngunu',
+    number: 14,
+    title: 'GAE OPO NGUNU?',
+    subtitle: 'Gini Rasanya Ditemenin',
+    date: 'Momen Kedewasaan',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor.jpg',
+    previewText: '“Ya kalo kamu langsung marah gitu, aku ngerasae ya terus aku gae opo ngunu.”',
+    fullStory: [
+      'Waktu aku iseng tanya: “Aku ada bikin kamu jengkel ga?”, Ali menjawab: “Hampir, hampir.”',
+      'Ternyata dia hampir jengkel waktu aku emosi sama orang lain dan langsung konfrontasi sendiri tanpa cerita dulu ke dia seperti masalah kemarin.',
+      'Ali bilang: “Ya kalo kamu langsung marah gitu, aku ngerasae ya terus aku gae opo ngunu.”',
+      'Hati rasanya anget banget. Selama ini selalu merasa kalau cerita terus itu nguras energi orang lain, jadi selalu berusaha selesaikan sendiri. Tapi bersama Ali... gini ya rasanya beneran ditemenin, ga dibiarin jalan sendirian.'
+    ],
+    dialogue: [
+      { speaker: 'Cegil', text: 'Aku ada bikin kamu jengkel ga mas?' },
+      { speaker: 'Ali', text: 'Hampir, hampir.' },
+      { speaker: 'Ali', text: 'Kalo kamu ada masalah terus langsung konfrontasi sendiri, aku ngerasae ya terus aku gae opo ngunu.' },
+      { speaker: 'Cegil', text: '*(Gini ya rasanya ditemenin... ga dibiarin sendirian)*' }
+    ],
+    statGain: { label: 'EMOTIONAL SECURITY', value: 'MAXIMUM (GA JALAN SENDIRIAN)' },
+    unlocked: false,
   }
 ];

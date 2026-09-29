@@ -16,7 +16,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
   const [showConfirmReset, setShowConfirmReset] = useState(false);
   const [preloadStatus, setPreloadStatus] = useState<{ loaded: number; total: number; done: boolean }>({
     loaded: 0,
-    total: 11,
+    total: 12,
     done: false,
   });
 
@@ -430,7 +430,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart }) => {
                 <strong style={{ color: '#f7768e' }}>• AUTO-SAVE AKTIF:</strong> Setiap dialog otomatis tersimpan. Kamu bisa reload web kapan saja tanpa takut kehilangan progres.
               </div>
               <div>
-                <strong style={{ color: '#73daca' }}>• MEMORY INVESTIGATION:</strong> Pada Chapter 05, klik dan baca 11 bukti anomali kepribadian Ali.
+                <strong style={{ color: '#73daca' }}>• MEMORY INVESTIGATION:</strong> Pada Chapter 05, klik dan baca 14 rekaman memori anomali kepribadian Ali.
               </div>
               <div>
                 <strong style={{ color: '#e0af68' }}>• AUDIO LO-FI:</strong> Pastikan audio aktif untuk merasakan nuansa sinematik indie terbaik.

@@ -611,21 +611,48 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     interactionType: 'draft-message',
     affection: 1,
-    onNext: 'quest03-ready',
+    onNext: 'quest03-reply-ali',
   },
 
-  'quest03-ready': {
-    id: 'quest03-ready',
+  'quest03-reply-ali': {
+    id: 'quest03-reply-ali',
+    phase: 'quest03',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor-night.jpg',
+    speaker: 'Ali',
+    speakerTitle: 'Player 1',
+    speakerAvatar: 'ali',
+    textType: 'dialogue',
+    text: '“Itu namanya maksa reimburse.”',
+    narration: [
+      'Notifikasi layar ponsel bergetar hanya beberapa detik setelah pesan terkirim.',
+    ],
+    systemBox: {
+      title: 'INCOMING MESSAGE',
+      lines: [
+        { label: 'FROM', value: 'ALI' },
+        { label: 'REACTION', value: 'MAKSA REIMBURSE' },
+        { label: 'STATUS', value: 'INVITATION ACCEPTED' },
+      ],
+      accentColor: 'cyan',
+    },
+    affection: 1,
+    onNext: 'quest03-reply-cegil',
+  },
+
+  'quest03-reply-cegil': {
+    id: 'quest03-reply-cegil',
     phase: 'quest03',
     location: 'kantor',
     bgImage: '/assets/bg-kantor-night.jpg',
     speaker: 'Cegil',
+    speakerTitle: 'Player 2',
     speakerAvatar: 'cegil',
-    textType: 'inner-monologue', // Kata Hati (no quotes)
-    text: 'Pesan sudah terkirim. Dan kamu membalas dengan santai: oke, besok sore di Cafe Little Cave ya.',
+    textType: 'inner-monologue', // Kata Hati
+    text: 'Tapi kalo diayoin beneran berangkat ini mah...',
     narration: [
       'Tidak ada jalan mundur lagi.',
-      'Besok adalah tanggal 26 Juli 2026 — hari di mana segalanya akan dimulai.',
+      'Besok adalah tanggal 26 Juli 2026 — hari di mana segalanya akan dimulai di Cafe Little Cave.',
     ],
     systemBox: {
       title: 'DESTINATION LOCKED',
@@ -1342,13 +1369,13 @@ export const STORY_NODES: Record<string, StoryNode> = {
     narration: [
       'Orang luar mungkin melihatmu sebagai sosok yang cuek dan irit bicara.',
       'Tapi aku tahu persis betapa lembut, lucu, dan perhatiannya kamu di balik semua itu.',
-      'Silakan investigasi 11 rekaman memori anomali kepribadian Ali di bawah ini:',
+      'Silakan investigasi 14 rekaman memori anomali kepribadian Ali di bawah ini:',
     ],
     systemBox: {
       title: 'CHAPTER 05: MEMORY ARCHIVE',
       lines: [
         { label: 'ACCESS LEVEL', value: 'UNRESTRICTED (GIRLFRIEND)' },
-        { label: 'FRAGMENTS AVAILABLE', value: '11 EVIDENCE RECORDS' },
+        { label: 'FRAGMENTS AVAILABLE', value: '14 EVIDENCE RECORDS' },
       ],
       accentColor: 'cyan',
     },
