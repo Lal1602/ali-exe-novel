@@ -90,7 +90,11 @@ export interface StoryNode {
     | 'polite-simon'
     | 'character-build'
     | 'timeline-sort'
-    | 'name-evolution';
+    | 'name-evolution'
+    | 'coffee-carry'
+    | 'word-catch'
+    | 'star-constellation'
+    | 'effort-bar';
   bgmMood?: 'ambient' | 'office' | 'cozy' | 'home' | 'romantic' | 'investigation' | 'celebration' | 'quiet';
   isMemoryHub?: boolean;
   isQuiz?: boolean;

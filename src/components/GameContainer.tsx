@@ -44,6 +44,10 @@ import { PoliteSimon } from './interactions/PoliteSimon';
 import { CharacterBuild } from './interactions/CharacterBuild';
 import { TimelineSort } from './interactions/TimelineSort';
 import { NameEvolution } from './interactions/NameEvolution';
+import { CoffeeCarry } from './interactions/CoffeeCarry';
+import { WordCatch } from './interactions/WordCatch';
+import { StarConstellation } from './interactions/StarConstellation';
+import { EffortBar } from './interactions/EffortBar';
 import { MiniGameGuide } from './MiniGameGuide';
 import { MINIGAME_GUIDES, getGuideKey } from '@/data/minigameGuides';
 
@@ -672,6 +676,18 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
       )}
       {activeInteraction === 'name-evolution' && (
         <NameEvolution onComplete={handleNext} />
+      )}
+      {activeInteraction === 'coffee-carry' && (
+        <CoffeeCarry onComplete={handleNext} />
+      )}
+      {activeInteraction === 'word-catch' && (
+        <WordCatch onComplete={handleNext} />
+      )}
+      {activeInteraction === 'star-constellation' && (
+        <StarConstellation onComplete={handleNext} />
+      )}
+      {activeInteraction === 'effort-bar' && (
+        <EffortBar onComplete={handleNext} />
       )}
 
       {/* How-to-play guide shown before every mini-game */}

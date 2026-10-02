@@ -8,15 +8,17 @@ import { MINIGAME_GUIDES } from '@/data/minigameGuides';
 import { MiniGameGuide } from './MiniGameGuide';
 import { CockroachDefender } from './interactions/CockroachDefender';
 import { TriageScan } from './interactions/TriageScan';
+import { ShaverScratch } from './interactions/ShaverScratch';
 
 interface MemoryInvestigationProps {
   onComplete: () => void;
 }
 
 // Fragments that open a small mini-game before their story is revealed
-const FRAGMENT_GAMES: Record<string, 'frag-cockroach' | 'frag-triage'> = {
+const FRAGMENT_GAMES: Record<string, 'frag-cockroach' | 'frag-triage' | 'frag-shaver'> = {
   'the-cockroach': 'frag-cockroach',
   'the-fall': 'frag-triage',
+  'the-shaver': 'frag-shaver',
 };
 
 export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComplete }) => {
@@ -203,6 +205,9 @@ export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComp
       )}
       {pending && pending.stage === 'game' && FRAGMENT_GAMES[pending.mem.id] === 'frag-triage' && (
         <TriageScan onComplete={finishFragmentGame} />
+      )}
+      {pending && pending.stage === 'game' && FRAGMENT_GAMES[pending.mem.id] === 'frag-shaver' && (
+        <ShaverScratch onComplete={finishFragmentGame} />
       )}
 
       {/* Modal Detail for Active Memory */}

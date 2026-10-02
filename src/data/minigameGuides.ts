@@ -134,6 +134,34 @@ export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
     controls: 'Klik / ketuk',
   },
 
+  // ---------- Batch 3 ----------
+  'coffee-carry': {
+    icon: '☕',
+    title: 'KOPI SAMPAI MEJA',
+    accent: 'amber',
+    goal: 'Antarkan kopi dingin dari pantry ke meja Cegil tanpa tumpah.',
+    steps: [
+      'Cangkir akan miring sendiri ke kiri atau kanan. Perhatikan pengukur di atas.',
+      'Tahan tombol KIRI atau KANAN untuk menyeimbangkannya. Miring ke kiri, tahan kanan.',
+      'Jaga pengukur tetap di zona hijau agar Ali terus berjalan. Isi jarak sampai 100%.',
+    ],
+    controls: 'Tahan tombol di layar, atau tahan [←] [→] / [A] [D]',
+    tip: 'Tumpah sedikit hanya mengurangi jarak. Tidak ada game over.',
+  },
+  'word-catch': {
+    icon: '💬',
+    title: 'TANGKAP KATA',
+    accent: 'purple',
+    goal: 'Tangkap 6 kata baik dari pengakuan Cegil.',
+    steps: [
+      'Kata-kata jatuh dari atas layar.',
+      'Ketuk kata berwarna HIJAU (jujur, tulus, dan sejenisnya) untuk menangkapnya.',
+      'Hindari kata MERAH yang cuma bising. Kalau tertangkap, jumlah tangkapanmu berkurang satu.',
+    ],
+    controls: 'Klik / ketuk',
+    tip: 'Kata yang terlewat hanya hilang. Tidak ada game over.',
+  },
+
   // ---------- Fragmen Memory Hub ----------
   'frag-cockroach': {
     icon: '🪳',
@@ -147,6 +175,19 @@ export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
     ],
     controls: 'Klik / ketuk',
     tip: 'Kalau ada yang lolos, ia kembali merayap dari awal. Tidak ada game over.',
+  },
+  'frag-shaver': {
+    icon: '🪒',
+    title: 'THE SHAVER',
+    accent: 'pink',
+    goal: 'Cukur habis bulu halus di lengan sampai mulus.',
+    steps: [
+      'Tahan dan geser jari (atau kursor) di atas lengan.',
+      'Bagian yang tersapu berubah mulus.',
+      'Bersihkan sampai bar MULUS mencapai 100%.',
+    ],
+    controls: 'Tahan dan geser dengan kursor atau jari',
+    tip: 'Tidak perlu rapi. Cukup geser berkali-kali sampai bersih.',
   },
 };
 

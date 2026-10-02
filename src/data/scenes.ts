@@ -272,6 +272,22 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     interactionType: 'coffee-order',
     affection: 1,
+    onNext: 'quest01-carry',
+  },
+
+  'quest01-carry': {
+    id: 'quest01-carry',
+    phase: 'quest01',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor-coffee.jpg',
+    speaker: 'System',
+    textType: 'narration',
+    text: 'Sebagai Ali, antarkan kopi dingin itu dari pantry ke meja Cegil.',
+    narration: [
+      'Jalannya tidak jauh, tapi cangkirnya penuh dan lantai kantor licin.',
+    ],
+    interactionType: 'coffee-carry',
+    affection: 1,
     onNext: 'quest01-after-order',
   },
 
@@ -781,6 +797,22 @@ export const STORY_NODES: Record<string, StoryNode> = {
       accentColor: 'pink',
     },
     affection: 0,
+    onNext: 'chapter01-catch',
+  },
+
+  'chapter01-catch': {
+    id: 'chapter01-catch',
+    phase: 'chapter01',
+    location: 'cafe-little-cave',
+    bgImage: '/assets/bg-cafe.jpg',
+    speaker: 'System',
+    textType: 'narration',
+    text: 'Pengakuan itu terlalu panjang untuk dicerna sekaligus. Mana yang benar-benar sampai ke Ali?',
+    narration: [
+      'Tangkap kata-kata yang tulus dari pengakuan Cegil.',
+    ],
+    interactionType: 'word-catch',
+    affection: 0,
     onNext: 'chapter01-choice',
   },
 
@@ -1258,6 +1290,23 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     interactionType: 'malang-explore',
     affection: 70,
+    onNext: 'chapter04-stars',
+  },
+
+  'chapter04-stars': {
+    id: 'chapter04-stars',
+    phase: 'chapter04',
+    location: 'malang',
+    bgImage: '/assets/bg-malang.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Aku mendongak. Langit di atas Malang malam itu penuh sekali dengan bintang.',
+    narration: [
+      'Seolah ada yang diam-diam menata titik-titik cahaya itu menjadi sebuah bentuk.',
+    ],
+    interactionType: 'star-constellation',
+    affection: 70,
     onNext: 'chapter04-buildup',
   },
 
@@ -1669,6 +1718,22 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'Tidak menjanjikan sesuatu di awang-awang yang belum tentu bisa ditepati.',
       'Cuma memilih untuk sungguh-sungguh mengusahakannya setiap hari.',
     ],
+    affection: 100,
+    onNext: 'chapter08-effort',
+  },
+
+  'chapter08-effort': {
+    id: 'chapter08-effort',
+    phase: 'chapter08',
+    location: 'cafe-little-cave',
+    bgImage: '/assets/bg-cafe-closing.jpg',
+    speaker: 'System',
+    textType: 'narration',
+    text: 'Tidak ada bar yang bisa mencapai 100%. Tapi tiap hari, ada yang tetap menambahkannya.',
+    narration: [
+      'Rasakan sendiri arti dari mengusahakan, bukan menjamin.',
+    ],
+    interactionType: 'effort-bar',
     affection: 100,
     onNext: 'chapter08-protect',
   },
