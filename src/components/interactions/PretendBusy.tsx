@@ -10,9 +10,30 @@ interface PretendBusyProps {
 }
 
 const TICK_MS = 100;
-const BUSY_PER_KEY = 7;
-const BUSY_DECAY = 1.1; // per tick
+const BUSY_PER_CORRECT_CHAR = 4;
+const BUSY_PER_SENTENCE = 10;
+const BUSY_DECAY = 0.8; // per tick
 const EAR_PER_TICK = 2.2;
+
+// Endless pool of "office" sentences to type; picked at random, never the same twice in a row
+const SENTENCES = [
+  'Rekap penjualan bulan ini sudah dikirim ke Bu Rina.',
+  'Mohon dicek kembali data stok gudang sebelum jam lima.',
+  'Revisi proposal sudah diunggah ke folder tim.',
+  'Rapat evaluasi dimulai pukul sepuluh di ruang tiga.',
+  'Tolong rapikan kolom tanggal dan nomor faktur.',
+  'Total anggaran kuartal ini masih menunggu persetujuan.',
+  'Laporan mingguan perlu ditambah grafik perbandingan.',
+  'Saya sedang menyusun daftar hadir peserta pelatihan.',
+  'Data pelanggan baru sudah masuk ke lembar kedua.',
+  'Jangan lupa simpan berkas sebelum meninggalkan meja.',
+];
+
+const pickSentence = (previous?: string) => {
+  let next = SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
+  while (next === previous) next = SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
+  return next;
+};
 
 const BUBBLES = [
   { id: 'a', who: 'Mbak Rekan', text: 'Mas Ali, file tadi udah masuk belum ya?', side: 'left' },
@@ -25,9 +46,15 @@ export const PretendBusy: React.FC<PretendBusyProps> = ({ onComplete }) => {
   const [busy, setBusy] = useState(40);
   const [ear, setEar] = useState(0);
   const [listening, setListening] = useState<string | null>(null);
+  const [sentence, setSentence] = useState<string>(() => pickSentence());
   const [typed, setTyped] = useState('');
+  const [sentencesDone, setSentencesDone] = useState(0);
+
   const listeningRef = useRef<string | null>(null);
   const busyRef = useRef(40);
+  const sentenceRef = useRef(sentence);
+  const typedRef = useRef('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const done = ear >= 100;
 
@@ -40,23 +67,62 @@ export const PretendBusy: React.FC<PretendBusyProps> = ({ onComplete }) => {
     setListening(null);
   };
 
-  const type = (char?: string) => {
-    const next = Math.min(100, busyRef.current + BUSY_PER_KEY);
+  const addBusy = (amount: number) => {
+    const next = Math.min(100, busyRef.current + amount);
     busyRef.current = next;
     setBusy(next);
-    setTyped((prev) => (prev + (char ?? '=SUM(')).slice(-28));
   };
 
-  // Any key counts as typing in the fake spreadsheet
+  const typeChar = (ch: string) => {
+    const current = typedRef.current;
+    const target = sentenceRef.current;
+    if (current.length >= target.length) return; // wait for backspace if the sentence is full but wrong
+
+    const next = current + ch;
+    typedRef.current = next;
+    setTyped(next);
+
+    if (ch === target[current.length]) {
+      sound.playBlip(520);
+      addBusy(BUSY_PER_CORRECT_CHAR);
+    } else {
+      sound.playErrorBuzz();
+    }
+
+    if (next === target) {
+      addBusy(BUSY_PER_SENTENCE);
+      setSentencesDone((n) => n + 1);
+      const following = pickSentence(target);
+      sentenceRef.current = following;
+      typedRef.current = '';
+      setSentence(following);
+      setTyped('');
+    }
+  };
+
+  const backspace = () => {
+    if (!typedRef.current) return;
+    const next = typedRef.current.slice(0, -1);
+    typedRef.current = next;
+    setTyped(next);
+  };
+
+  // Desktop keyboard. Virtual keyboards (key === 'Unidentified') fall through to the input's onInput.
   useEffect(() => {
     if (done) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.repeat && e.key.length > 1) return;
-      if (e.key.length === 1) type(e.key);
-      else if (e.key === 'Backspace' || e.key === 'Enter') type('');
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        backspace();
+      } else if (e.key.length === 1) {
+        e.preventDefault();
+        typeChar(e.key);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done]);
 
   useEffect(() => {
@@ -72,11 +138,11 @@ export const PretendBusy: React.FC<PretendBusyProps> = ({ onComplete }) => {
     return () => clearInterval(timer);
   }, [done]);
 
-  const caught = listening !== null && busy <= 0;
-
   useEffect(() => {
     if (done) sound.playAffectionChime();
   }, [done]);
+
+  const caught = listening !== null && busy <= 0;
 
   return (
     <InteractionShell
@@ -84,30 +150,65 @@ export const PretendBusy: React.FC<PretendBusyProps> = ({ onComplete }) => {
       hint={
         done
           ? undefined
-          : 'Ketik apa saja supaya terlihat sibuk, sambil mengarahkan kursor (atau menahan jari) ke obrolan di sebelah.'
+          : 'Ketik kalimat di Sheet1 supaya terlihat sibuk, sambil mengarahkan kursor (atau menahan jari) ke obrolan di sebelah.'
       }
       accent="pink"
       maxWidth={600}
       onSkip={finish}
     >
-      {/* Fake spreadsheet */}
-      <div style={{ border: '2px solid #3b4261', background: '#0f111a', marginBottom: '14px' }}>
+      {/* Fake spreadsheet with a ghost sentence to follow */}
+      <div
+        onClick={() => inputRef.current?.focus()}
+        style={{ position: 'relative', border: '2px solid #3b4261', background: '#0f111a', marginBottom: '14px', cursor: 'text' }}
+      >
         <div style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.48rem', color: '#565f89', padding: '4px 8px', borderBottom: '1px solid #24283b' }}>
-          Sheet1 — Book1.xlsx
+          Sheet1 — Book1.xlsx · kalimat selesai: {sentencesDone}
         </div>
         <div
           style={{
-            minHeight: '34px',
-            padding: '8px 10px',
+            minHeight: '58px',
+            padding: '10px 12px',
             fontFamily: 'monospace',
-            fontSize: '0.8rem',
-            color: '#73daca',
-            wordBreak: 'break-all',
+            fontSize: '0.95rem',
+            lineHeight: 1.6,
+            wordBreak: 'break-word',
           }}
         >
-          {typed || <span style={{ color: '#3b4261' }}>(kosong)</span>}
-          <span className="blink">▋</span>
+          {sentence.split('').map((ch, i) => {
+            const isTyped = i < typed.length;
+            const correct = isTyped && typed[i] === ch;
+            const isCursor = i === typed.length;
+            return (
+              <span
+                key={i}
+                style={{
+                  color: !isTyped ? '#e2e8f0' : correct ? '#73daca' : '#f7768e',
+                  opacity: isTyped ? 1 : 0.5,
+                  background: isTyped && !correct ? 'rgba(247, 118, 142, 0.25)' : 'transparent',
+                  borderLeft: isCursor && !done ? '2px solid #4deeea' : '2px solid transparent',
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {ch}
+              </span>
+            );
+          })}
         </div>
+        {/* Hidden field so touch devices can bring up a keyboard by tapping the sheet */}
+        <input
+          ref={inputRef}
+          aria-label="Ketik kalimat di Sheet1"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          onInput={(e) => {
+            const value = e.currentTarget.value;
+            e.currentTarget.value = '';
+            for (const ch of value) typeChar(ch);
+          }}
+          style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%', border: 'none', background: 'transparent' }}
+        />
       </div>
 
       {/* Bars */}
@@ -132,13 +233,21 @@ export const PretendBusy: React.FC<PretendBusyProps> = ({ onComplete }) => {
 
       {!done ? (
         <>
-          <button
-            onClick={() => type()}
-            className="pixel-btn"
-            style={{ width: '100%', padding: '10px', fontSize: '0.65rem', marginBottom: '12px', touchAction: 'manipulation' }}
+          <div
+            style={{
+              padding: '10px 14px',
+              marginBottom: '12px',
+              borderLeft: '3px solid #bb9af7',
+              background: 'rgba(187, 154, 247, 0.1)',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.85rem',
+              color: '#c0caf5',
+              lineHeight: 1.5,
+            }}
           >
-            ⌨️ KETIK (atau tekan tombol keyboard apa saja)
-          </button>
+            💡 <strong>Petunjuk:</strong> ikuti kalimat samar di Sheet1. Ketik persis sesuai tulisannya. Huruf yang salah berwarna merah,
+            hapus dengan <kbd>Backspace</kbd>. Kalimatnya tidak ada habisnya, jadi terus ketik sambil menguping.
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
             {BUBBLES.map((b) => (

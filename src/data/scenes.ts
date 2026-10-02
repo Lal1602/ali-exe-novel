@@ -10,7 +10,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     location: 'system-void',
     speaker: 'System',
     textType: 'narration',
-    text: 'INITIALIZING ANOMALY SYSTEM V.2026...\n\nMemuat data arsip kenangan 26 Juli — 16 Agustus 2026...',
+    text: 'INITIALIZING ANOMALY SYSTEM V.2026...\n\nMemuat data arsip kenangan 26 Juli — 23 Oktober 2026...',
     systemBox: {
       title: 'PLAYER INITIALIZATION',
       lines: [

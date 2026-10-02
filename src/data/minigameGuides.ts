@@ -75,7 +75,7 @@ export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
     accent: 'pink',
     goal: 'Terlihat sibuk dengan Excel, sambil diam-diam menguping.',
     steps: [
-      'Ketik apa saja (atau ketuk tombol KETIK) agar bar PROFESIONAL naik.',
+      'Ketik kalimat samar di Sheet1 persis sesuai tulisannya agar bar PROFESIONAL naik. Salah huruf? Tekan Backspace.',
       'Arahkan kursor atau tahan jari di bubble obrolan untuk menguping. Bar TELINGA ikut naik.',
       'Isi bar TELINGA sampai 100%. Bar profesional pelan-pelan turun kalau kamu berhenti mengetik, dan telinga hanya naik selama profesional masih ada.',
     ],
