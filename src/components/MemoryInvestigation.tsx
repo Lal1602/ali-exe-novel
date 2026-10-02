@@ -39,7 +39,8 @@ export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComp
   const handleOpenMemory = (mem: MemoryFragment) => {
     sound.playClick();
     if (FRAGMENT_GAMES[mem.id] && !played.includes(mem.id)) {
-      setPending({ mem, stage: 'guide' });
+      // Only games with real mechanics have a how-to-play guide; the rest start right away
+      setPending({ mem, stage: MINIGAME_GUIDES[FRAGMENT_GAMES[mem.id]] ? 'guide' : 'game' });
       return;
     }
     openStory(mem);

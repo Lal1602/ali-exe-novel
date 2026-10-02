@@ -13,129 +13,6 @@ export interface MiniGameGuideData {
 }
 
 export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
-  // ---------- Mini-game lama ----------
-  'coffee-order': {
-    icon: '☕',
-    title: 'PESAN KOPI',
-    accent: 'amber',
-    goal: 'Pilih kopi yang dipesan Cegil dari pantry.',
-    steps: [
-      'Baca ketiga pilihan menu kopi.',
-      'Klik satu menu untuk memilihnya.',
-      'Tekan tombol konfirmasi untuk memesan.',
-    ],
-    controls: 'Klik / ketuk',
-    tip: 'Tidak ada jawaban salah. Tiap pilihan punya reaksi yang berbeda.',
-  },
-  jealousy: {
-    icon: '💢',
-    title: 'REAKSI CEMBURU',
-    accent: 'pink',
-    goal: 'Tentukan bagaimana Cegil menyikapi rasa tidak nyaman di kantor.',
-    steps: [
-      'Baca tiga kemungkinan reaksi.',
-      'Klik satu reaksi untuk melihat apa yang terjadi di kepalanya.',
-      'Lanjutkan cerita setelah membaca.',
-    ],
-    controls: 'Klik / ketuk',
-    tip: 'Pilihan hanya mengubah narasi, bukan alur cerita.',
-  },
-  'draft-message': {
-    icon: '✉️',
-    title: 'DRAFT PESAN',
-    accent: 'cyan',
-    goal: 'Pilih draft pesan ajakan yang akan dikirim ke Ali.',
-    steps: [
-      'Baca tiga draft pesan.',
-      'Klik draft yang paling terasa pas.',
-      'Tekan KIRIM.',
-    ],
-    controls: 'Klik / ketuk',
-    tip: 'Draft C adalah pilihan final di cerita aslinya, tapi bebas dicoba semuanya.',
-  },
-  'cafe-explore': {
-    icon: '🔍',
-    title: 'EKSPLORASI LITTLE CAVE',
-    accent: 'amber',
-    goal: 'Baca isi pikiran Cegil sebelum ia mengucapkan pengakuan.',
-    steps: [
-      'Klik objek-objek di meja kafe.',
-      'Baca pikiran yang muncul di setiap objek.',
-      'Periksa minimal 2 objek agar tombol lanjut terbuka.',
-    ],
-    controls: 'Klik / ketuk',
-  },
-  'chat-tapper': {
-    icon: '💬',
-    title: 'BALAS CHAT',
-    accent: 'cyan',
-    goal: 'Ikuti obrolan pertama di luar jam kantor.',
-    steps: [
-      'Ketuk layar chat untuk memunculkan pesan berikutnya.',
-      'Ulangi sampai semua pesan terbaca.',
-    ],
-    controls: 'Klik / ketuk',
-  },
-  'malang-explore': {
-    icon: '🌃',
-    title: 'JELAJAH MALANG',
-    accent: 'purple',
-    goal: 'Kumpulkan kenangan di tiga titik perjalanan Malang.',
-    steps: [
-      'Klik setiap titik lokasi.',
-      'Baca cuplikan yang muncul.',
-      'Kunjungi ketiga titik untuk melanjutkan.',
-    ],
-    controls: 'Klik / ketuk',
-  },
-  'evidence-board': {
-    icon: '📌',
-    title: 'PAPAN BUKTI',
-    accent: 'amber',
-    goal: 'Buktikan kenapa Ali disebut "bocil matang".',
-    steps: [
-      'Klik setiap kartu bukti untuk membukanya.',
-      'Buka semua kartu untuk lanjut ke bab berikutnya.',
-    ],
-    controls: 'Klik / ketuk',
-  },
-  'memory-hub': {
-    icon: '🗂️',
-    title: 'MEMORY INVESTIGATION',
-    accent: 'cyan',
-    goal: 'Ungkap fragmen kenangan yang menjelaskan anomali Ali.',
-    steps: [
-      'Klik kartu fragmen untuk membaca ceritanya (bebas urutan).',
-      'Beberapa fragmen punya mini-game kecil di dalamnya.',
-      'Buka minimal 8 fragmen untuk membuka tombol lanjut.',
-    ],
-    controls: 'Klik / ketuk',
-    tip: 'Fragmen yang sudah dibuka bisa dibaca ulang kapan saja.',
-  },
-  quiz: {
-    icon: '❓',
-    title: 'KUIS ANOMALI',
-    accent: 'pink',
-    goal: 'Tebak apa penyebab anomali kepribadian Ali.',
-    steps: [
-      'Pilih jawaban mana saja.',
-      'Coba semua opsi. Sistem akan memberi tahu kenapa masing-masing belum tepat.',
-      'Setelah semua dicoba, jawaban sebenarnya terungkap.',
-    ],
-    controls: 'Klik / ketuk',
-    tip: 'Memang sengaja semuanya "salah". Santai saja.',
-  },
-  'inner-child': {
-    icon: '🔓',
-    title: 'BUKA INNER CHILD',
-    accent: 'purple',
-    goal: 'Buka kunci sisi kecil Cegil yang selama ini terkunci.',
-    steps: [
-      'Tekan tombol buka kunci.',
-      'Tunggu sebentar. Rasa aman tidak bisa dipaksa cepat.',
-    ],
-    controls: 'Klik / ketuk',
-  },
 
   // ---------- Batch 1 ----------
   'ml-last-hit': {
@@ -177,18 +54,6 @@ export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
     ],
     controls: 'Klik / ketuk',
     tip: 'Blok yang terlewat hanya hilang. Tidak ada hukuman.',
-  },
-  'emotion-welcome': {
-    icon: '🧸',
-    title: 'SAMBUT 4 RASA',
-    accent: 'purple',
-    goal: 'Sambut empat emosi sisi kecil Cegil dengan cara yang membuatnya aman.',
-    steps: [
-      'Baca emosi yang muncul (marah, riang, ingin, nakal).',
-      'Pilih respons yang terasa paling hangat.',
-      'Kalau kurang tepat, akan ada petunjuk lembut dan kamu bisa memilih lagi.',
-    ],
-    controls: 'Klik / ketuk',
   },
   'birthday-candles': {
     icon: '🎂',
@@ -243,19 +108,6 @@ export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
     controls: 'Klik / ketuk',
     tip: 'Salah urutan? Urutannya diputar ulang, kamu bisa coba lagi.',
   },
-  'character-build': {
-    icon: '🛠️',
-    title: 'CHARACTER BUILD',
-    accent: 'green',
-    goal: 'Atur status karakter Ali sebagai "Bocil Matang".',
-    steps: [
-      'Kamu punya 9 poin untuk dibagikan.',
-      'Tekan + dan − pada RESPONSIBILITY, PROTECTIVENESS, dan COMMON SENSE.',
-      'Habiskan semua poin untuk membuka passive GENTLE SIDE.',
-    ],
-    controls: 'Klik / ketuk',
-    tip: 'Tidak ada build yang salah.',
-  },
   'timeline-sort': {
     icon: '🗓️',
     title: 'SUSUN TIMELINE',
@@ -296,28 +148,13 @@ export const MINIGAME_GUIDES: Record<string, MiniGameGuideData> = {
     controls: 'Klik / ketuk',
     tip: 'Kalau ada yang lolos, ia kembali merayap dari awal. Tidak ada game over.',
   },
-  'frag-triage': {
-    icon: '🩹',
-    title: 'THE FALL: SCAN LUKA',
-    accent: 'pink',
-    goal: 'Periksa luka Cegil seperti Ali: "Mana, liat."',
-    steps: [
-      'Ketuk bagian tubuh yang bisa diperiksa.',
-      'Temukan 3 area luka: lutut, siku, dan pinggang.',
-      'Bagian yang sehat akan dinyatakan aman.',
-    ],
-    controls: 'Klik / ketuk',
-  },
 };
 
 /**
- * Which guide (if any) applies to a story node.
- * Interaction type wins; otherwise the special-screen flags.
+ * Only real mini-games (timing, reflex, memory, ordering...) have a how-to-play guide.
+ * Pick-one / click-through screens deliberately have none.
  */
 export const getGuideKey = (node: StoryNode): string | null => {
-  if (node.interactionType) return node.interactionType;
-  if (node.isMemoryHub) return 'memory-hub';
-  if (node.isQuiz) return 'quiz';
-  if (node.isInnerChildUnlock) return 'inner-child';
-  return null;
+  const key = node.interactionType;
+  return key && MINIGAME_GUIDES[key] ? key : null;
 };
