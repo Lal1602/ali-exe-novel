@@ -38,6 +38,14 @@ import { MLLastHit } from './interactions/MLLastHit';
 import { GlitchDebug } from './interactions/GlitchDebug';
 import { EmotionWelcome } from './interactions/EmotionWelcome';
 import { BirthdayCandles } from './interactions/BirthdayCandles';
+import { PretendBusy } from './interactions/PretendBusy';
+import { BreathSend } from './interactions/BreathSend';
+import { PoliteSimon } from './interactions/PoliteSimon';
+import { CharacterBuild } from './interactions/CharacterBuild';
+import { TimelineSort } from './interactions/TimelineSort';
+import { NameEvolution } from './interactions/NameEvolution';
+import { MiniGameGuide } from './MiniGameGuide';
+import { MINIGAME_GUIDES, getGuideKey } from '@/data/minigameGuides';
 
 // Helper to resolve fallback background from location
 const getDefaultBg = (location?: string) => {
@@ -114,6 +122,14 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
   }, [continueFromSave]);
 
   const currentNode: StoryNode = STORY_NODES[currentNodeId] || STORY_NODES['boot-init'];
+
+  // How-to-play guide: shown once per mini-game node before the game itself mounts
+  const [guideSeenFor, setGuideSeenFor] = useState<string | null>(null);
+  const guideKey = getGuideKey(currentNode);
+  const guide = guideKey ? MINIGAME_GUIDES[guideKey] : undefined;
+  const showGuide = Boolean(guide) && guideSeenFor !== currentNode.id;
+  const gameReady = !showGuide;
+  const activeInteraction = gameReady ? currentNode.interactionType : undefined;
 
   // Record dialogue entries to backlog history
   useEffect(() => {
@@ -581,75 +597,100 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
       )}
 
       {/* Chapter 01 Coffee Order Puzzle */}
-      {currentNode.interactionType === 'coffee-order' && (
+      {activeInteraction === 'coffee-order' && (
         <CoffeeOrderPuzzle onComplete={() => handleNext()} />
       )}
 
       {/* Quest 02 Jealousy Mini Game */}
-      {currentNode.interactionType === 'jealousy' && (
+      {activeInteraction === 'jealousy' && (
         <JealousyMiniGame onComplete={handleNext} />
       )}
 
       {/* Quest 03 Draft Message Picker */}
-      {currentNode.interactionType === 'draft-message' && (
+      {activeInteraction === 'draft-message' && (
         <DraftMessagePicker onComplete={handleNext} />
       )}
 
       {/* Chapter 01 Cafe Exploration */}
-      {currentNode.interactionType === 'cafe-explore' && (
+      {activeInteraction === 'cafe-explore' && (
         <CafeExploration onComplete={handleNext} />
       )}
 
       {/* Chapter 02 Chat Tapper */}
-      {currentNode.interactionType === 'chat-tapper' && (
+      {activeInteraction === 'chat-tapper' && (
         <ChatTapper onComplete={handleNext} />
       )}
 
       {/* Chapter 04 Malang Exploration */}
-      {currentNode.interactionType === 'malang-explore' && (
+      {activeInteraction === 'malang-explore' && (
         <MalangExploration onComplete={handleNext} />
       )}
 
       {/* Chapter 06 Evidence Board */}
-      {currentNode.interactionType === 'evidence-board' && (
+      {activeInteraction === 'evidence-board' && (
         <EvidenceBoard onComplete={handleNext} />
       )}
 
       {/* Chapter 02 Daily Quest Match & ML Last Hit */}
-      {currentNode.interactionType === 'daily-match' && (
+      {activeInteraction === 'daily-match' && (
         <DailyQuestMatch onComplete={handleNext} />
       )}
-      {currentNode.interactionType === 'ml-last-hit' && (
+      {activeInteraction === 'ml-last-hit' && (
         <MLLastHit onComplete={handleNext} />
       )}
 
       {/* Chapter 04 Glitch Debug */}
-      {currentNode.interactionType === 'glitch-debug' && (
+      {activeInteraction === 'glitch-debug' && (
         <GlitchDebug onComplete={handleNext} />
       )}
 
       {/* Chapter 07 Emotion Welcome */}
-      {currentNode.interactionType === 'emotion-welcome' && (
+      {activeInteraction === 'emotion-welcome' && (
         <EmotionWelcome onComplete={handleNext} />
       )}
 
       {/* Epilogue Birthday Candles */}
-      {currentNode.interactionType === 'birthday-candles' && (
+      {activeInteraction === 'birthday-candles' && (
         <BirthdayCandles onComplete={handleNext} />
       )}
 
+      {/* Chapter 02/03/06/Final/Epilogue additional mini-games */}
+      {activeInteraction === 'pretend-busy' && (
+        <PretendBusy onComplete={handleNext} />
+      )}
+      {activeInteraction === 'breath-send' && (
+        <BreathSend onComplete={handleNext} />
+      )}
+      {activeInteraction === 'polite-simon' && (
+        <PoliteSimon onComplete={handleNext} />
+      )}
+      {activeInteraction === 'character-build' && (
+        <CharacterBuild onComplete={handleNext} />
+      )}
+      {activeInteraction === 'timeline-sort' && (
+        <TimelineSort onComplete={handleNext} />
+      )}
+      {activeInteraction === 'name-evolution' && (
+        <NameEvolution onComplete={handleNext} />
+      )}
+
+      {/* How-to-play guide shown before every mini-game */}
+      {showGuide && guide && !showChapterCard && (
+        <MiniGameGuide guide={guide} onStart={() => setGuideSeenFor(currentNode.id)} />
+      )}
+
       {/* Chapter 05 Memory Investigation Hub */}
-      {currentNode.isMemoryHub && (
+      {gameReady && currentNode.isMemoryHub && (
         <MemoryInvestigation onComplete={handleNext} />
       )}
 
       {/* Final Chapter Quiz */}
-      {currentNode.isQuiz && (
+      {gameReady && currentNode.isQuiz && (
         <QuizScreen onComplete={handleNext} />
       )}
 
       {/* Chapter 07 Inner Child Unlock */}
-      {currentNode.isInnerChildUnlock && (
+      {gameReady && currentNode.isInnerChildUnlock && (
         <InnerChildUnlock onComplete={handleNext} />
       )}
 

@@ -481,6 +481,23 @@ export const STORY_NODES: Record<string, StoryNode> = {
     },
     affection: 1,
     bgmMood: 'office',
+    onNext: 'quest02-pretend',
+  },
+
+  'quest02-pretend': {
+    id: 'quest02-pretend',
+    phase: 'quest02',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Dari balik layar komputer, aku mendengar tawa kalian berdua dari meja sebelah.',
+    narration: [
+      'Tanganku pura-pura sibuk mengetik. Telingaku? Seratus persen menghadap ke arah suara kalian.',
+    ],
+    interactionType: 'pretend-busy',
+    affection: 1,
     onNext: 'quest02-canteen',
   },
 
@@ -594,6 +611,23 @@ export const STORY_NODES: Record<string, StoryNode> = {
     },
     affection: 1,
     bgmMood: 'office',
+    onNext: 'quest03-breath',
+  },
+
+  'quest03-breath': {
+    id: 'quest03-breath',
+    phase: 'quest03',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor-night.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Sebelum mengetik satu huruf pun, aku harus mengumpulkan keberanian dulu.',
+    narration: [
+      'Tarik napas. Hembuskan. Jantungku berdetak seperti sedang dikejar deadline.',
+    ],
+    interactionType: 'breath-send',
+    affection: 1,
     onNext: 'quest03-draft',
   },
 
@@ -1071,6 +1105,23 @@ export const STORY_NODES: Record<string, StoryNode> = {
       accentColor: 'green',
     },
     affection: 50,
+    onNext: 'chapter03-etiquette',
+  },
+
+  'chapter03-etiquette': {
+    id: 'chapter03-etiquette',
+    phase: 'chapter03',
+    location: 'tropodo',
+    bgImage: '/assets/bg-tropodo-dusk.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Di depan pintu, kamu sempat merapikan kerah baju. Aku pura-pura tidak melihat, tapi diam-diam tersenyum.',
+    narration: [
+      'Salim, duduk, menerima teh, menjawab pertanyaan. Semuanya ada urutannya.',
+    ],
+    interactionType: 'polite-simon',
+    affection: 50,
     onNext: 'chapter03-meet-parents',
   },
 
@@ -1466,6 +1517,20 @@ export const STORY_NODES: Record<string, StoryNode> = {
     },
     affection: 100,
     bgmMood: 'cozy',
+    onNext: 'chapter06-build',
+  },
+
+  'chapter06-build': {
+    id: 'chapter06-build',
+    phase: 'chapter06',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor-approach.jpg',
+    speaker: 'System',
+    textType: 'narration',
+    text: 'CHARACTER PROFILE: ALI\n\nAtur status karakter "Bocil Matang" dengan membagikan poin skill.',
+    interactionType: 'character-build',
+    affection: 100,
+    bgmMood: 'cozy',
     onNext: 'chapter06-board',
   },
 
@@ -1643,14 +1708,14 @@ export const STORY_NODES: Record<string, StoryNode> = {
     },
     affection: 100,
     transitionOut: 'glitch',
-    onNext: 'final-quiz-node',
+    onNext: 'final-timeline',
   },
 
   // ==========================================
   // FINAL CHAPTER — THE ANOMALY QUIZ
   // ==========================================
-  'final-quiz-node': {
-    id: 'final-quiz-node',
+  'final-timeline': {
+    id: 'final-timeline',
     phase: 'final-quiz',
     location: 'system-void',
     isChapterStart: true,
@@ -1661,6 +1726,19 @@ export const STORY_NODES: Record<string, StoryNode> = {
       location: 'Sistem Pusat ALI.EXE',
       affection: 100,
     },
+    speaker: 'System',
+    textType: 'narration',
+    text: 'SYSTEM ARCHIVE REVIEW:\n\nSusun kembali arsip tanggal penting sebelum pertanyaan terakhir diajukan.',
+    interactionType: 'timeline-sort',
+    affection: 100,
+    bgmMood: 'ambient',
+    onNext: 'final-quiz-node',
+  },
+
+  'final-quiz-node': {
+    id: 'final-quiz-node',
+    phase: 'final-quiz',
+    location: 'system-void',
     speaker: 'System',
     textType: 'narration', // Narasi (no quotes)
     text: 'SYSTEM ARCHIVE REVIEW:\n\n26 Juli — 0%\n8 Agustus — 50% → 60%\n16 Agustus — 100%\n\nPertanyaan Terakhir: Apa yang sebenarnya menyebabkan anomali kepribadian Ali?',
@@ -1716,6 +1794,24 @@ export const STORY_NODES: Record<string, StoryNode> = {
       ],
       accentColor: 'pink',
     },
+    affection: 100,
+    bgmMood: 'romantic',
+    onNext: 'epilogue-name',
+  },
+
+  'epilogue-name': {
+    id: 'epilogue-name',
+    phase: 'epilogue',
+    location: 'malang',
+    bgImage: '/assets/bg-malang.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Coba susun sendiri bagaimana panggilanmu berubah dari waktu ke waktu.',
+    narration: [
+      'Mas Ali, Masli, lalu Sayang.',
+    ],
+    interactionType: 'name-evolution',
     affection: 100,
     bgmMood: 'romantic',
     onNext: 'epilogue-dialogue',

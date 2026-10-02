@@ -84,7 +84,13 @@ export interface StoryNode {
     | 'ml-last-hit'
     | 'glitch-debug'
     | 'emotion-welcome'
-    | 'birthday-candles';
+    | 'birthday-candles'
+    | 'pretend-busy'
+    | 'breath-send'
+    | 'polite-simon'
+    | 'character-build'
+    | 'timeline-sort'
+    | 'name-evolution';
   bgmMood?: 'ambient' | 'office' | 'cozy' | 'home' | 'romantic' | 'investigation' | 'celebration' | 'quiet';
   isMemoryHub?: boolean;
   isQuiz?: boolean;

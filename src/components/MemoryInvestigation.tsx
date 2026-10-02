@@ -4,25 +4,53 @@ import React, { useState } from 'react';
 import { MEMORY_FRAGMENTS } from '@/data/memories';
 import { MemoryFragment } from '@/types/game';
 import { sound } from '@/utils/audio';
+import { MINIGAME_GUIDES } from '@/data/minigameGuides';
+import { MiniGameGuide } from './MiniGameGuide';
+import { CockroachDefender } from './interactions/CockroachDefender';
+import { TriageScan } from './interactions/TriageScan';
 
 interface MemoryInvestigationProps {
   onComplete: () => void;
 }
 
+// Fragments that open a small mini-game before their story is revealed
+const FRAGMENT_GAMES: Record<string, 'frag-cockroach' | 'frag-triage'> = {
+  'the-cockroach': 'frag-cockroach',
+  'the-fall': 'frag-triage',
+};
+
 export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComplete }) => {
   const [memories, setMemories] = useState<MemoryFragment[]>(MEMORY_FRAGMENTS);
   const [activeMemory, setActiveMemory] = useState<MemoryFragment | null>(null);
+  const [pending, setPending] = useState<{ mem: MemoryFragment; stage: 'guide' | 'game' } | null>(null);
+  const [played, setPlayed] = useState<string[]>([]);
 
   const inspectedCount = memories.filter((m) => m.unlocked).length;
   const canFinish = inspectedCount >= 8; // At least 8 or all memories
 
-  const handleOpenMemory = (mem: MemoryFragment) => {
-    sound.playClick();
+  const openStory = (mem: MemoryFragment) => {
     setActiveMemory(mem);
     // Mark as unlocked
     setMemories((prev) =>
       prev.map((item) => (item.id === mem.id ? { ...item, unlocked: true } : item))
     );
+  };
+
+  const handleOpenMemory = (mem: MemoryFragment) => {
+    sound.playClick();
+    if (FRAGMENT_GAMES[mem.id] && !played.includes(mem.id)) {
+      setPending({ mem, stage: 'guide' });
+      return;
+    }
+    openStory(mem);
+  };
+
+  const finishFragmentGame = () => {
+    if (!pending) return;
+    const { mem } = pending;
+    setPlayed((p) => (p.includes(mem.id) ? p : [...p, mem.id]));
+    setPending(null);
+    openStory(mem);
   };
 
   const handleCloseModal = () => {
@@ -156,11 +184,25 @@ export const MemoryInvestigation: React.FC<MemoryInvestigationProps> = ({ onComp
               color: '#4deeea',
               fontFamily: 'var(--font-pixel)',
             }}>
-              [ BUKA CATATAN ]
+              {FRAGMENT_GAMES[m.id] && !played.includes(m.id) ? '[ 🎮 MAIN MINI-GAME ]' : '[ BUKA CATATAN ]'}
             </div>
           </div>
         ))}
       </div>
+
+      {/* Fragment mini-game: guide first, then the game */}
+      {pending && pending.stage === 'guide' && (
+        <MiniGameGuide
+          guide={MINIGAME_GUIDES[FRAGMENT_GAMES[pending.mem.id]]}
+          onStart={() => setPending({ ...pending, stage: 'game' })}
+        />
+      )}
+      {pending && pending.stage === 'game' && FRAGMENT_GAMES[pending.mem.id] === 'frag-cockroach' && (
+        <CockroachDefender onComplete={finishFragmentGame} />
+      )}
+      {pending && pending.stage === 'game' && FRAGMENT_GAMES[pending.mem.id] === 'frag-triage' && (
+        <TriageScan onComplete={finishFragmentGame} />
+      )}
 
       {/* Modal Detail for Active Memory */}
       {activeMemory && (
