@@ -79,7 +79,12 @@ export interface StoryNode {
     | 'cafe-explore' 
     | 'chat-tapper' 
     | 'malang-explore' 
-    | 'evidence-board';
+    | 'evidence-board'
+    | 'daily-match'
+    | 'ml-last-hit'
+    | 'glitch-debug'
+    | 'emotion-welcome'
+    | 'birthday-candles';
   bgmMood?: 'ambient' | 'office' | 'cozy' | 'home' | 'romantic' | 'investigation' | 'celebration' | 'quiet';
   isMemoryHub?: boolean;
   isQuiz?: boolean;

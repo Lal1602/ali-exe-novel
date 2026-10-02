@@ -33,6 +33,11 @@ import { CafeExploration } from './interactions/CafeExploration';
 import { ChatTapper } from './interactions/ChatTapper';
 import { MalangExploration } from './interactions/MalangExploration';
 import { EvidenceBoard } from './interactions/EvidenceBoard';
+import { DailyQuestMatch } from './interactions/DailyQuestMatch';
+import { MLLastHit } from './interactions/MLLastHit';
+import { GlitchDebug } from './interactions/GlitchDebug';
+import { EmotionWelcome } from './interactions/EmotionWelcome';
+import { BirthdayCandles } from './interactions/BirthdayCandles';
 
 // Helper to resolve fallback background from location
 const getDefaultBg = (location?: string) => {
@@ -253,11 +258,27 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
     }
   }, [currentNode.affection, currentNode.affectionChangeText, affection]);
 
+  // Transition guard: true from the moment a curtain starts closing until it is fully idle again
+  const isTransitioningRef = useRef(false);
+  const transitionTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const scheduleTransitionStep = (fn: () => void, ms: number) => {
+    transitionTimersRef.current.push(setTimeout(fn, ms));
+  };
+
+  useEffect(() => {
+    const timers = transitionTimersRef.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   // Smooth, leak-proof scene transition with 4-phase curtain state machine
   const changeSceneWithTransition = (targetNodeId: string) => {
     ensureAudio();
     const nextNode = STORY_NODES[targetNodeId];
     if (!nextNode) return;
+
+    // Ignore advance requests (double-tap, mini-game timer) while a curtain is already running
+    if (isTransitioningRef.current) return;
 
     // Resolve current and next background to detect background changes accurately
     const currentBg = currentNode.bgImage || getDefaultBg(currentNode.location);
@@ -276,6 +297,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
 
     if (needsTransition) {
       sound.playWhoosh();
+      isTransitioningRef.current = true;
       setTransitionType(chosenTransition);
       setTransitionPhase('closing');
 
@@ -284,7 +306,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
       const openDuration = 320;
 
       // Phase 1: Closing curtain (320ms) -> Screen reaches 100% solid opacity
-      setTimeout(() => {
+      scheduleTransitionStep(() => {
         // Phase 2: Screen is now 100% COVERED in solid barrier (zero light leaks)
         setTransitionPhase('covered');
 
@@ -301,13 +323,14 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
         setImageError(false);
 
         // Hold in solid blackout for 100ms so Next.js Image decode and DOM painting finish
-        setTimeout(() => {
+        scheduleTransitionStep(() => {
           // Phase 3: Open curtain smoothly revealing the ready scene
           setTransitionPhase('opening');
 
-          setTimeout(() => {
+          scheduleTransitionStep(() => {
             // Phase 4: Complete and idle
             setTransitionPhase('idle');
+            isTransitioningRef.current = false;
           }, openDuration);
         }, holdDuration);
       }, closeDuration);
@@ -590,6 +613,29 @@ export const GameContainer: React.FC<GameContainerProps> = ({ continueFromSave =
       {/* Chapter 06 Evidence Board */}
       {currentNode.interactionType === 'evidence-board' && (
         <EvidenceBoard onComplete={handleNext} />
+      )}
+
+      {/* Chapter 02 Daily Quest Match & ML Last Hit */}
+      {currentNode.interactionType === 'daily-match' && (
+        <DailyQuestMatch onComplete={handleNext} />
+      )}
+      {currentNode.interactionType === 'ml-last-hit' && (
+        <MLLastHit onComplete={handleNext} />
+      )}
+
+      {/* Chapter 04 Glitch Debug */}
+      {currentNode.interactionType === 'glitch-debug' && (
+        <GlitchDebug onComplete={handleNext} />
+      )}
+
+      {/* Chapter 07 Emotion Welcome */}
+      {currentNode.interactionType === 'emotion-welcome' && (
+        <EmotionWelcome onComplete={handleNext} />
+      )}
+
+      {/* Epilogue Birthday Candles */}
+      {currentNode.interactionType === 'birthday-candles' && (
+        <BirthdayCandles onComplete={handleNext} />
       )}
 
       {/* Chapter 05 Memory Investigation Hub */}

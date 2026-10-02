@@ -919,6 +919,24 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     interactionType: 'chat-tapper',
     affection: 5,
+    onNext: 'chapter02-ml',
+  },
+
+  'chapter02-ml': {
+    id: 'chapter02-ml',
+    phase: 'chapter02',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor-approach.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Katamu, kamu mau main ML sebentar. Aku tahu itu artinya sebentar versi kamu: sampai lupa waktu.',
+    narration: [
+      'Ali sedang push rank. Chat dariku masuk di sela-sela pertandingan.',
+      'Fokus pada last hit, tapi jangan lupa membalas.',
+    ],
+    interactionType: 'ml-last-hit',
+    affection: 5,
     onNext: 'chapter02-teasing',
   },
 
@@ -943,6 +961,23 @@ export const STORY_NODES: Record<string, StoryNode> = {
       ],
       accentColor: 'pink',
     },
+    affection: 5,
+    onNext: 'chapter02-match',
+  },
+
+  'chapter02-match': {
+    id: 'chapter02-match',
+    phase: 'chapter02',
+    location: 'kantor',
+    bgImage: '/assets/bg-kantor-approach.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Hari-hari itu terasa seperti kepingan kecil yang berserakan. Kopi, obrolan, waktu bersama, ledekan, cemburu, dan penyangkalan.',
+    narration: [
+      'Susun kembali kepingan-kepingan itu. Satu per satu, semuanya menumpuk.',
+    ],
+    interactionType: 'daily-match',
     affection: 5,
     onNext: 'chapter02-montage',
   },
@@ -1288,6 +1323,19 @@ export const STORY_NODES: Record<string, StoryNode> = {
       accentColor: 'pink',
     },
     affection: 95,
+    onNext: 'chapter04-debug',
+  },
+
+  'chapter04-debug': {
+    id: 'chapter04-debug',
+    phase: 'chapter04',
+    location: 'malang',
+    bgImage: '/assets/bg-malang.jpg',
+    speaker: 'System',
+    textType: 'narration',
+    text: 'REBOOTING PLAYER 2 RESPONSE MODULE...\n\nPerbaiki blok yang rusak sampai respons ditemukan.',
+    affection: 95,
+    interactionType: 'glitch-debug',
     onNext: 'chapter04-ali-100',
   },
 
@@ -1470,6 +1518,37 @@ export const STORY_NODES: Record<string, StoryNode> = {
       ],
       accentColor: 'pink',
     },
+    affection: 100,
+    bgmMood: 'quiet',
+    onNext: 'chapter07-welcome',
+  },
+
+  'chapter07-welcome': {
+    id: 'chapter07-welcome',
+    phase: 'chapter07',
+    location: 'tropodo',
+    bgImage: '/assets/bg-kamar-cegil.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Dan kamu menyambut sisi kecil itu, apa adanya, dalam empat rasa yang paling jarang kuperlihatkan pada siapa pun.',
+    narration: [
+      'Pilih cara menyambut yang membuatnya merasa aman.',
+    ],
+    interactionType: 'emotion-welcome',
+    affection: 100,
+    bgmMood: 'quiet',
+    onNext: 'chapter07-unlock',
+  },
+
+  'chapter07-unlock': {
+    id: 'chapter07-unlock',
+    phase: 'chapter07',
+    location: 'tropodo',
+    bgImage: '/assets/bg-kamar-cegil.jpg',
+    speaker: 'System',
+    textType: 'narration',
+    text: 'INNER CHILD: LOCKED → UNLOCKED\n\nNEW PASSIVE: SAFE TO BE YOURSELF',
     affection: 100,
     isInnerChildUnlock: true,
     bgmMood: 'quiet',
@@ -1663,6 +1742,24 @@ export const STORY_NODES: Record<string, StoryNode> = {
     affection: 100,
     specialEffect: 'heartburst',
     bgmMood: 'romantic',
+    onNext: 'epilogue-candles',
+  },
+
+  'epilogue-candles': {
+    id: 'epilogue-candles',
+    phase: 'epilogue',
+    location: 'malang',
+    bgImage: '/assets/bg-malang.jpg',
+    speaker: 'Cegil',
+    speakerAvatar: 'cegil',
+    textType: 'inner-monologue', // Kata Hati (no quotes)
+    text: 'Satu hal lagi sebelum game ini disimpan: make a wish, lalu tiup lilinnya.',
+    narration: [
+      'Selamat ulang tahun, Ali.',
+    ],
+    interactionType: 'birthday-candles',
+    affection: 100,
+    bgmMood: 'celebration',
     transitionOut: 'fade-black',
     onNext: 'save-screen-node',
   },
